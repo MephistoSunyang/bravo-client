@@ -1,0 +1,416 @@
+<!-- user search template begin -->
+<ng-template #searchUsersTable>
+  <form nz-form [formGroup]="searchUserForm" (submit)="getUsersAndCount(1)">
+    <div nz-row nzGutter="24">
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-username">用户名</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-username"
+              nz-input
+              formControlName="username"
+              placeholder="请输入查询的用户名"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-nickname">昵称</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-nickname"
+              nz-input
+              formControlName="nickname"
+              placeholder="请输入查询的昵称"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-realname">真实姓名</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-realname"
+              nz-input
+              formControlName="realname"
+              placeholder="请输入查询的真实姓名"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-phone">手机号码</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-phone"
+              nz-input
+              formControlName="phone"
+              placeholder="请输入查询的真实姓名"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-email">电子邮箱</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-email"
+              nz-input
+              formControlName="email"
+              placeholder="请输入查询的真实姓名"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-type">用户类型</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="search-type"
+              formControlName="type"
+              [nzOptions]="typeOptions"
+              nzAllowClear
+              nzPlaceHolder="请选择用户类型"
+            ></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-role-id">角色</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="search-role-id"
+              formControlName="roleId"
+              [nzOptions]="roleOptions"
+              nzAllowClear
+              nzPlaceHolder="请选择角色"
+            ></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div
+        nz-col
+        [nzSm]="{ span: 12, push: 0 }"
+        [nzMd]="{ span: 8, push: 8 }"
+        [nzLg]="{ span: 6, push: 0 }"
+      >
+        <nz-form-item class="flr">
+          <nz-space>
+            <nz-space-item>
+              <button type="button" nz-button nzType="default" (click)="reset()">
+                重置
+              </button>
+            </nz-space-item>
+            <nz-space-item>
+              <button type="button" nz-button nzType="primary" (click)="search()">搜索</button>
+            </nz-space-item>
+          </nz-space>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!-- user search template end -->
+
+<!-- user list template begin -->
+<nz-table
+  #usersTable
+  [nzTitle]="searchUsersTable"
+  [nzLoading]="usersLoading"
+  [nzData]="users"
+  [nzTotal]="usersTotal"
+  [(nzPageIndex)]="usersPageNumber"
+  [(nzPageSize)]="usersPageSize"
+  nzBordered
+  nzSize="small"
+  [nzFrontPagination]="false"
+  nzShowSizeChanger
+  nzHideOnSinglePage
+  (nzPageIndexChange)="getUsersAndCount($event)"
+  (nzPageSizeChange)="getUsersAndCount(usersPageNumber, $event)"
+>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>用户名</th>
+      <th>昵称</th>
+      <th>真实姓名</th>
+      <th>手机号码</th>
+      <th>电子邮箱</th>
+      <th class="tac" width="100">
+        <nz-space>
+          <nz-space-item>操作</nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="点击创建"
+              (click)="openUserModal()"
+            >
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+        </nz-space>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of usersTable.data">
+      <td>{{ user.id }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.nickname }}</td>
+      <td>{{ user.realname }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.email }}</td>
+      <td class="tac">
+        <nz-space>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="点击编辑"
+              (click)="openUserModal(user)"
+            >
+              <i nz-icon nzType="edit" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="修改密码"
+              (click)="openPasswordModel(user.id)"
+            >
+              <i nz-icon nzType="key" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nzDanger
+              nz-popconfirm
+              [nzTitle]="messages.DELETE_CONFIRM"
+              (nzOnConfirm)="deleteUser(user.id)"
+              [nzLoading]="deletedUserId === user.id"
+              [disabled]="deletedUserId === user.id"
+              nz-tooltip
+              nzTooltipTitle="点击删除"
+            >
+              <i nz-icon nzType="delete" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+        </nz-space>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<!-- user list template end -->
+
+<!-- user modal template begin -->
+<nz-modal
+  [(nzVisible)]="userModalVisible"
+  nzTitle="用户管理"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="closeUserModal()"
+>
+</nz-modal>
+<ng-template #modalContent>
+  <nz-content>
+    <form nz-form [formGroup]="userForm" (submit)="saveUserForm()">
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-username" nzRequired>用户名</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input
+            id="form-username"
+            nz-input
+            formControlName="username"
+            placeholder="请输入用户名"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="!user">
+        <nz-form-label nzSpan="4" nzFor="form-password" nzRequired>密码</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input
+            id="form-password"
+            nz-input
+            formControlName="password"
+            type="password"
+            placeholder="请输入用户名"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="!user">
+        <nz-form-label nzSpan="4" nzFor="form-confirm-password" nzRequired>确认密码</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input
+            id="form-confirm-password"
+            nz-input
+            formControlName="confirmPassword"
+            type="password"
+            placeholder="请再次输入密码"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-nickname">昵称</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-nickname" nz-input formControlName="nickname" placeholder="请输入昵称" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-realname">真实姓名</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input
+            id="form-realname"
+            nz-input
+            formControlName="realname"
+            placeholder="请输入真实姓名"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-phone">手机号码</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-phone" nz-input formControlName="phone" placeholder="请输入手机号码" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-email">电子邮件</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-email" nz-input formControlName="email" placeholder="请输入电子邮件" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-role-ids">角色</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-select
+            id="form-role-ids"
+            formControlName="roleIds"
+            [nzOptions]="roleOptions"
+            nzMode="multiple"
+            nzAllowClear
+            nzPlaceHolder="请选择角色"
+          ></nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-comment">备注</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <textarea
+            id="form-comment"
+            nz-input
+            formControlName="comment"
+            placeholder="请输入备注"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-content>
+</ng-template>
+<ng-template #modalFooter>
+  <button nz-button nzType="default" (click)="closeUserModal()">
+    取消
+  </button>
+  <button
+    nz-button
+    nzType="primary"
+    [disabled]="saveUserDisabled"
+    [nzLoading]="saveUserLoading"
+    (click)="saveUserForm()"
+  >
+    保存
+  </button>
+</ng-template>
+<!-- user modal template end -->
+
+<!-- change password modal template begin -->
+<nz-modal
+  [(nzVisible)]="passwordModalVisible"
+  nzTitle="修改密码"
+  [nzContent]="passwordModalContent"
+  [nzFooter]="passwordModalFooter"
+  (nzOnCancel)="closePasswordModel()"
+>
+</nz-modal>
+<ng-template #passwordModalContent>
+  <nz-content>
+    <form nz-form [formGroup]="passwordForm" (submit)="savePasswordForm()">
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="password-form-password" nzRequired>旧密码</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input
+            id="password-form-password"
+            nz-input
+            formControlName="password"
+            type="password"
+            placeholder="请输入旧密码"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="password-form-new-password" nzRequired
+          >新密码</nz-form-label
+        >
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input
+            id="password-form-new-password"
+            nz-input
+            formControlName="newPassword"
+            type="password"
+            placeholder="请输入新密码"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="password-form-confirm-new-password" nzRequired
+          >确认密码</nz-form-label
+        >
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input
+            id="password-form-confirm-new-password"
+            nz-input
+            formControlName="confirmNewPassword"
+            type="password"
+            placeholder="请再次输入新密码"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-content>
+</ng-template>
+<ng-template #passwordModalFooter>
+  <button nz-button nzType="default" (click)="closePasswordModel()">
+    取消
+  </button>
+  <button
+    nz-button
+    nzType="primary"
+    [disabled]="saveUserDisabled"
+    [nzLoading]="saveUserLoading"
+    (click)="savePasswordForm()"
+  >
+    保存
+  </button>
+</ng-template>
+<!-- change password modal template end -->

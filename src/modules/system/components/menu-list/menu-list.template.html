@@ -1,0 +1,35 @@
+<ul nz-menu [nzTheme]="theme" [nzMode]="model">
+  <ng-container *ngIf="firstMenu">
+    <li nz-menu-item [routerLink]="firstMenu?.path" routerLinkActive="ant-menu-item-selected">
+      <span><i nz-icon [nzType]="firstMenu?.icon" nzTheme="outline"></i>{{ firstMenu?.name }}</span>
+    </li>
+  </ng-container>
+  <ng-container *ngFor="let menu of menus">
+    <ng-container *ngTemplateOutlet="menuTemplate; context: { $implicit: menu }"></ng-container>
+  </ng-container>
+  <ng-template #menuTemplate let-menu>
+    <ng-container *ngIf="menu.visible">
+      <ng-container *ngIf="menu.subMenus && menu.subMenus.length !== 0; else singleMenu;">
+        <li
+          nz-submenu
+          [nzTitle]="menu.name"
+          [nzIcon]="menu.icon"
+          [nzOpen]="checkParentMenuOpen(menu)"
+        >
+          <ul>
+            <ng-container *ngFor="let subMenu of menu.subMenus">
+              <ng-container
+                *ngTemplateOutlet="menuTemplate; context: { $implicit: subMenu }"
+              ></ng-container>
+            </ng-container>
+          </ul>
+        </li>
+      </ng-container>
+      <ng-template #singleMenu>
+        <li nz-menu-item [routerLink]="menu.path" routerLinkActive="ant-menu-item-selected">
+          <span><i nz-icon [nzType]="menu.icon" nzTheme="outline"></i>{{ menu.name }}</span>
+        </li>
+      </ng-template>
+    </ng-container>
+  </ng-template>
+</ul>

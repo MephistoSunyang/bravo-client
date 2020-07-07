@@ -1,0 +1,194 @@
+<!-- roleGroup search template begin -->
+<ng-template #searchRoleGroupsTable>
+  <form nz-form [formGroup]="searchRoleGroupForm" (submit)="getRoleGroupsAndCount(1)">
+    <div nz-row nzGutter="24">
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-code">代码</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-code"
+              nz-input
+              formControlName="code"
+              placeholder="请输入查询的代码"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-name">名称</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-name"
+              nz-input
+              formControlName="name"
+              placeholder="请输入查询的名称"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div
+        nz-col
+        [nzSm]="{ span: 12, push: 12 }"
+        [nzMd]="{ span: 8, push: 0 }"
+        [nzLg]="{ span: 6, push: 6 }"
+      >
+        <nz-form-item class="flr">
+          <nz-space>
+            <nz-space-item>
+              <button type="button" nz-button nzType="default" (click)="reset()">
+                重置
+              </button>
+            </nz-space-item>
+            <nz-space-item>
+              <button type="button" nz-button nzType="primary" (click)="search()">搜索</button>
+            </nz-space-item>
+          </nz-space>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!-- roleGroup search template end -->
+
+<!-- roleGroup list template begin -->
+<nz-table
+  #roleGroupsTable
+  [nzTitle]="searchRoleGroupsTable"
+  [nzLoading]="roleGroupsLoading"
+  [nzData]="roleGroups"
+  [nzTotal]="roleGroupsTotal"
+  [(nzPageIndex)]="roleGroupsPageNumber"
+  [(nzPageSize)]="roleGroupsPageSize"
+  nzBordered
+  nzSize="small"
+  [nzFrontPagination]="false"
+  nzShowSizeChanger
+  nzHideOnSinglePage
+  (nzPageIndexChange)="getRoleGroupsAndCount($event)"
+  (nzPageSizeChange)="getRoleGroupsAndCount(roleGroupsPageNumber, $event)"
+>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>代码</th>
+      <th>名称</th>
+      <th class="tac" width="100">
+        <nz-space>
+          <nz-space-item>操作</nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="点击创建"
+              (click)="openRoleGroupModal()"
+            >
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+        </nz-space>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let roleGroup of roleGroupsTable.data">
+      <td>{{ roleGroup.id }}</td>
+      <td>{{ roleGroup.code }}</td>
+      <td>{{ roleGroup.name }}</td>
+      <td class="tac">
+        <nz-space>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="点击编辑"
+              (click)="openRoleGroupModal(roleGroup)"
+            >
+              <i nz-icon nzType="edit" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nzDanger
+              nz-popconfirm
+              [nzTitle]="messages.DELETE_CONFIRM"
+              (nzOnConfirm)="deleteRoleGroup(roleGroup.id)"
+              [nzLoading]="deletedRoleGroupId === roleGroup.id"
+              [disabled]="deletedRoleGroupId === roleGroup.id"
+              nz-tooltip
+              nzTooltipTitle="点击删除"
+            >
+              <i nz-icon nzType="delete" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+        </nz-space>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<!-- roleGroup list template end -->
+
+<!-- roleGroup modal template begin -->
+<nz-modal
+  [(nzVisible)]="roleGroupModalVisible"
+  nzTitle="角色组管理"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="closeRoleGroupModal()"
+>
+</nz-modal>
+<ng-template #modalContent>
+  <nz-content>
+    <form nz-form [formGroup]="roleGroupForm" (submit)="saveRoleGroupForm()">
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-code" nzRequired>代码</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-code" nz-input formControlName="code" placeholder="请输入代码" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-name" nzRequired>名字</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-name" nz-input formControlName="name" placeholder="请输入名字" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-comment">备注</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <textarea
+            id="form-comment"
+            nz-input
+            formControlName="comment"
+            placeholder="请输入备注"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-content>
+</ng-template>
+<ng-template #modalFooter>
+  <button nz-button nzType="default" (click)="closeRoleGroupModal()">
+    取消
+  </button>
+  <button
+    nz-button
+    nzType="primary"
+    [disabled]="saveRoleGroupDisabled"
+    [nzLoading]="saveRoleGroupLoading"
+    (click)="saveRoleGroupForm()"
+  >
+    保存
+  </button>
+</ng-template>
+<!-- roleGroup modal template end -->

@@ -1,0 +1,23 @@
+<nz-layout class="login-container">
+  <nz-content class="login-content">
+    <form nz-form [formGroup]="loginForm" (ngSubmit)="login()">
+      <nz-form-item>
+        <nz-form-control>
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="username" placeholder="请填写用户名" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="password" placeholder="请填写密码" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <button nz-button nzType="primary" nzBlock [disabled]="loginForm.invalid">
+        登录
+      </button>
+    </form>
+  </nz-content>
+</nz-layout>

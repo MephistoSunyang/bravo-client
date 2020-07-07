@@ -1,0 +1,256 @@
+<!-- menu search template begin -->
+<ng-template #searchMenusTable>
+  <form nz-form [formGroup]="searchMenuForm" (submit)="getMenus()">
+    <div nz-row nzGutter="24">
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-group">分组</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-group"
+              nz-input
+              formControlName="group"
+              placeholder="请输入查询的分组"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-name">名称</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-name"
+              nz-input
+              formControlName="name"
+              placeholder="请输入查询的名称"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div
+        nz-col
+        [nzSm]="{ span: 12, push: 12 }"
+        [nzMd]="{ span: 8, push: 0 }"
+        [nzLg]="{ span: 6, push: 6 }"
+      >
+        <nz-form-item class="flr">
+          <nz-space>
+            <nz-space-item>
+              <button type="button" nz-button nzType="default" (click)="reset()">
+                重置
+              </button>
+            </nz-space-item>
+            <nz-space-item>
+              <button type="button" nz-button nzType="primary" (click)="search()">搜索</button>
+            </nz-space-item>
+          </nz-space>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!-- menu search template end -->
+
+<!-- menu list template begin -->
+<nz-table
+  #menusTable
+  [nzTitle]="searchMenusTable"
+  [nzLoading]="menusLoading"
+  [nzData]="menus"
+  nzBordered
+  nzSize="small"
+  nzFrontPagination
+  nzShowSizeChanger
+  nzHideOnSinglePage
+>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>分组</th>
+      <th>排序</th>
+      <th>名称</th>
+      <th>图标</th>
+      <th>路径</th>
+      <th class="tac" width="100">
+        <nz-space>
+          <nz-space-item>操作</nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="点击创建"
+              (click)="openMenuModal()"
+            >
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+        </nz-space>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let menu of menusTable.data">
+      <tr *ngIf="(menu.parent && menu.parent.expand) || !menu.parent">
+        <td
+          [nzIndentSize]="menu.level * 10"
+          [nzShowExpand]="menu.subMenus && menu.subMenus.length > 0"
+          [(nzExpand)]="menu.expand"
+          (nzExpandChange)="collapse(menu, $event)"
+        >
+          <span>{{ menu.id }}</span>
+        </td>
+        <td>{{ menu.group }}</td>
+        <td>{{ menu.sort }}</td>
+        <td>{{ menu.name }}</td>
+        <td>{{ menu.icon }}</td>
+        <td>{{ menu.path }}</td>
+        <td class="tac">
+          <nz-space>
+            <nz-space-item>
+              <button
+                nz-button
+                nzType="primary"
+                nzShape="circle"
+                nzSize="small"
+                nz-tooltip
+                nzTooltipTitle="点击编辑"
+                (click)="openMenuModal(menu)"
+              >
+                <i nz-icon nzType="edit" nzTheme="outline"></i>
+              </button>
+            </nz-space-item>
+            <nz-space-item>
+              <button
+                nz-button
+                nzType="primary"
+                nzShape="circle"
+                nzSize="small"
+                nzDanger
+                nz-popconfirm
+                [nzTitle]="messages.DELETE_CONFIRM"
+                (nzOnConfirm)="deleteMenu(menu.id)"
+                [nzLoading]="deletedMenuId === menu.id"
+                [disabled]="deletedMenuId === menu.id"
+                nz-tooltip
+                nzTooltipTitle="点击删除"
+              >
+                <i nz-icon nzType="delete" nzTheme="outline"></i>
+              </button>
+            </nz-space-item>
+          </nz-space>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</nz-table>
+<!-- menu list template end -->
+
+<!-- menu modal template begin -->
+<nz-modal
+  [(nzVisible)]="menuModalVisible"
+  nzTitle="菜单管理"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="closeMenuModal()"
+>
+</nz-modal>
+<ng-template #modalContent>
+  <nz-content>
+    <form nz-form [formGroup]="menuForm" (submit)="saveMenuForm()">
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-group" nzRequired>分组</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-group" nz-input formControlName="group" placeholder="请输入分组" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-parent-id">父菜单</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-tree-select
+            id="form-parent-id"
+            formControlName="parentId"
+            [nzNodes]="menuOptions"
+            nzPlaceHolder="请选择父菜单"
+          >
+          </nz-tree-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-sort" nzRequired>排序</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-input-number formControlName="sort" nzPlaceHolder="请输入排序"></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-name" nzRequired>名字</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-name" nz-input formControlName="name" placeholder="请输入名字" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-icon">图标</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input id="form-icon" nz-input formControlName="icon" />
+        </nz-form-control>
+        <button
+          class="ml-8"
+          nz-button
+          nz-dropdown
+          [nzDropdownMenu]="menu"
+          nzTrigger="click"
+          [(nzVisible)]="iconNamesModelVisible"
+          type="button"
+        >
+          选择图标
+        </button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu class="dropdown-ul dropdown-menu">
+            <li
+              class="dropdown-li"
+              *ngFor="let iconName of iconNames"
+              (click)="selectIcon(iconName)"
+            >
+              <i nz-icon [nzType]="iconName"></i>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-visible">可见</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-switch id="form-visible" formControlName="visible"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-comment">备注</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <textarea
+            id="form-comment"
+            nz-input
+            formControlName="comment"
+            placeholder="请输入备注"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-content>
+</ng-template>
+<ng-template #modalFooter>
+  <button nz-button nzType="default" (click)="closeMenuModal()">
+    取消
+  </button>
+  <button
+    nz-button
+    nzType="primary"
+    [disabled]="saveMenuDisabled"
+    [nzLoading]="saveMenuLoading"
+    (click)="saveMenuForm()"
+  >
+    保存
+  </button>
+</ng-template>
+<!-- menu modal template end -->

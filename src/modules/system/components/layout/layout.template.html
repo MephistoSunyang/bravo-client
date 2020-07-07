@@ -1,0 +1,55 @@
+<nz-spin class="system-loading" nzSize="large" [nzSpinning]="isSpinning">
+  <nz-layout class="system-layout">
+    <nz-sider class="system-sider">
+      <div class="system-logo">BravoNJ</div>
+      <nz-content class="system-menu">
+        <menu-list theme="dark" model="inline" [menus]="menus" [firstMenu]="firstMenu"></menu-list>
+      </nz-content>
+      <nz-footer class="system-copyright">
+        ©2020<br />
+        All rights reserved.
+      </nz-footer>
+    </nz-sider>
+    <nz-layout class="system-container">
+      <nz-header class="system-header">
+        <nz-content class="system-user-information">
+          <nz-button-group>
+            <button nz-button>
+              <i nz-icon nzType="user"></i>
+            </button>
+            <button nz-button>{{ username }}</button>
+            <button
+              nz-button
+              nz-dropdown
+              [nzDropdownMenu]="menu"
+              nzTrigger="click"
+              nzPlacement="bottomRight"
+            >
+              <i nz-icon nzType="ellipsis"></i>
+            </button>
+          </nz-button-group>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu nzSelectable>
+              <li nz-menu-item (click)="backHome()">
+                <i nz-icon nzType="home" nzTheme="outline"></i>返回主页
+              </li>
+              <li
+                nz-menu-item
+                nz-popconfirm
+                [nzTitle]="messages.CONFIRM_LOGOUT"
+                (nzOnConfirm)="logout()"
+              >
+                <i nz-icon nzType="logout" nzTheme="outline"></i>注销登录
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </nz-content>
+      </nz-header>
+      <nz-content class="system-content">
+        <div class="page-container">
+          <router-outlet></router-outlet>
+        </div>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</nz-spin>

@@ -1,0 +1,38 @@
+<!-- log list template begin -->
+<nz-table
+  #logsTable
+  [nzLoading]="logsLoading"
+  [nzData]="logs"
+  nzBordered
+  nzSize="small"
+  nzFrontPagination
+  nzShowSizeChanger
+  nzHideOnSinglePage
+>
+  <thead>
+    <tr>
+      <th>日志名称</th>
+      <th class="tac" width="80">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let log of logsTable.data">
+      <td>{{ log }}</td>
+      <td class="tac">
+        <a
+          nz-button
+          nzType="primary"
+          nzShape="circle"
+          nzSize="small"
+          [href]="'api/v1/system/logs/'+log"
+          target="_blank"
+          nz-tooltip
+          nzTooltipTitle="点击下载"
+        >
+          <i nz-icon nzType="download" nzTheme="outline"></i>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<!-- log list template end -->
