@@ -5,11 +5,11 @@ import _ from 'lodash';
   name: 'find',
 })
 export class FindPipe implements PipeTransform {
-  public transform(value: any, collections: any[], field = 'name') {
+  public transform(value: any, collections: any[], valueField = 'id', nameField = 'name') {
     const collection = _.find(
       collections,
-      (collection) => _.toString(collection[field]) === _.toString(value),
+      (collection) => _.toString(collection[valueField]) === _.toString(value),
     );
-    return collection ? collection : null;
+    return collection && collection[nameField] ? collection[nameField] : null;
   }
 }

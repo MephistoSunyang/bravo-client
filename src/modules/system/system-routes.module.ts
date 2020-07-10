@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
 import {
   ActionsComponent,
+  AttachmentsComponent,
   ConfigsComponent,
   FeaturesComponent,
   HomeComponent,
@@ -31,6 +32,7 @@ const routes: Route[] = [
       { path: 'actions', component: ActionsComponent },
       { path: 'configs', component: ConfigsComponent },
       { path: 'logs', component: LogsComponent },
+      { path: 'attachments', component: AttachmentsComponent },
     ],
     canActivate: [AuthenticationGuard],
     canActivateChild: [AuthenticationGuard],

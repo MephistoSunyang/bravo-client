@@ -4,7 +4,9 @@
     <div nz-row nzGutter="24">
       <div nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
-          <nz-form-label nzFor="search-role-group">角色组</nz-form-label>
+          <nz-form-label nzFor="search-role-group">
+            角&nbsp;&nbsp;色&nbsp;&nbsp;组
+          </nz-form-label>
           <nz-form-control>
             <nz-select
               id="search-role-group"
@@ -19,7 +21,9 @@
       </div>
       <div nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
-          <nz-form-label nzFor="search-code">代码</nz-form-label>
+          <nz-form-label nzFor="search-code">
+            代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码
+          </nz-form-label>
           <nz-form-control>
             <input
               id="search-code"
@@ -32,7 +36,9 @@
       </div>
       <div nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
-          <nz-form-label nzFor="search-name">名称</nz-form-label>
+          <nz-form-label nzFor="search-name">
+            名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称
+          </nz-form-label>
           <nz-form-control>
             <input
               id="search-name"
@@ -108,7 +114,7 @@
   <tbody>
     <tr *ngFor="let role of rolesTable.data">
       <td>{{ role.id }}</td>
-      <td>{{ role.roleGroupId }}</td>
+      <td>{{ role.roleGroupId | find: roleGroups: 'id': 'name' }}</td>
       <td>{{ role.code }}</td>
       <td>{{ role.name }}</td>
       <td class="tac">

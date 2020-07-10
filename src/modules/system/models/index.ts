@@ -1,4 +1,5 @@
 export * from './action.model';
+export * from './attachment.model';
 export * from './base.model';
 export * from './config.model';
 export * from './feature.model';

@@ -1,0 +1,266 @@
+<!-- attachment search template begin -->
+<ng-template #searchAttachmentsTable>
+  <form nz-form [formGroup]="searchAttachmentForm" (submit)="getAttachmentsAndCount(1)">
+    <div nz-row nzGutter="24">
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-encoding">
+            编&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码
+          </nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-encoding"
+              nz-input
+              formControlName="encoding"
+              placeholder="请输入查询的编码"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-mime-type">
+            类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型
+          </nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-mime-type"
+              nz-input
+              formControlName="mimeType"
+              placeholder="请输入查询的类型"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-folder-name">文件夹名</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-folder-name"
+              nz-input
+              formControlName="folderName"
+              placeholder="请输入查询的文件夹名"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-file-name">文&nbsp;&nbsp;件&nbsp;&nbsp;名</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-file-name"
+              nz-input
+              formControlName="fileName"
+              placeholder="请输入查询的文件名"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-ext-name">后&nbsp;&nbsp;缀&nbsp;&nbsp;名</nz-form-label>
+          <nz-form-control>
+            <input
+              id="search-ext-name"
+              nz-input
+              formControlName="extName"
+              placeholder="请输入查询的后缀名"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-storage-type">存贮方式</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="search-storage-type"
+              formControlName="storageType"
+              [nzOptions]="storageTypeOptions"
+              nzAllowClear
+              nzPlaceHolder="请选择查询的存贮方式"
+            ></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div
+        nz-col
+        [nzSm]="{ span: 12, push: 12 }"
+        [nzMd]="{ span: 8, push: 16 }"
+        [nzLg]="{ span: 6, push: 6 }"
+      >
+        <nz-form-item class="flr">
+          <nz-space>
+            <nz-space-item>
+              <button type="button" nz-button nzType="default" (click)="reset()">
+                重置
+              </button>
+            </nz-space-item>
+            <nz-space-item>
+              <button type="button" nz-button nzType="primary" (click)="search()">搜索</button>
+            </nz-space-item>
+          </nz-space>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!-- attachment search template end -->
+
+<!-- attachment list template begin -->
+<nz-table
+  #attachmentsTable
+  [nzTitle]="searchAttachmentsTable"
+  [nzLoading]="attachmentsLoading"
+  [nzData]="attachments"
+  [nzTotal]="attachmentsTotal"
+  [(nzPageIndex)]="attachmentsPageNumber"
+  [(nzPageSize)]="attachmentsPageSize"
+  nzBordered
+  nzSize="small"
+  [nzFrontPagination]="false"
+  nzShowSizeChanger
+  nzHideOnSinglePage
+  (nzPageIndexChange)="getAttachmentsAndCount($event)"
+  (nzPageSizeChange)="getAttachmentsAndCount(attachmentsPageNumber, $event)"
+>
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>编码</th>
+      <th>文件名</th>
+      <th>大小</th>
+      <th>文件夹</th>
+      <th>后缀名</th>
+      <th>存贮方式</th>
+      <th>最后下载时间</th>
+      <th class="tac" width="100">
+        <nz-space>
+          <nz-space-item>操作</nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="点击创建"
+              (click)="openAttachmentModal()"
+            >
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+        </nz-space>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let attachment of attachmentsTable.data">
+      <td>{{ attachment.id }}</td>
+      <td>{{ attachment.encoding }}</td>
+      <td>{{ attachment.originalName }}</td>
+      <td>{{ attachment.size }}</td>
+      <td>{{ attachment.folderName }}</td>
+      <td>{{ attachment.extName }}</td>
+      <td>{{ attachment.storageType | find: storageTypes: 'value': 'name' }}</td>
+      <td>{{ attachment.lastDownloadDate | toTime }}</td>
+      <td class="tac">
+        <nz-space>
+          <nz-space-item>
+            <a
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nz-tooltip
+              nzTooltipTitle="点击下载"
+              target="_blank"
+              [href]="'resources/' + attachment.path"
+            >
+              <i nz-icon nzType="download" nzTheme="outline"></i>
+            </a>
+          </nz-space-item>
+          <nz-space-item>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              nzSize="small"
+              nzDanger
+              nz-popconfirm
+              [nzTitle]="messages.DELETE_CONFIRM"
+              (nzOnConfirm)="deleteAttachment(attachment.id)"
+              [nzLoading]="deletedAttachmentId === attachment.id"
+              [disabled]="deletedAttachmentId === attachment.id"
+              nz-tooltip
+              nzTooltipTitle="点击删除"
+            >
+              <i nz-icon nzType="delete" nzTheme="outline"></i>
+            </button>
+          </nz-space-item>
+        </nz-space>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<!-- attachment list template end -->
+
+<!-- attachment modal template begin -->
+<nz-modal
+  [(nzVisible)]="attachmentModalVisible"
+  nzTitle="附件管理"
+  [nzContent]="modalContent"
+  [nzFooter]="modalFooter"
+  (nzOnCancel)="closeAttachmentModal()"
+>
+</nz-modal>
+<ng-template #modalContent>
+  <nz-content>
+    <form nz-form [formGroup]="attachmentForm" (submit)="saveAttachmentForm()">
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-storage-type" nzRequired>存贮方式</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-select
+            id="form-storage-type"
+            formControlName="storageType"
+            [nzOptions]="storageTypeOptions"
+            nzAllowClear
+            nzPlaceHolder="请选择存贮方式"
+          ></nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-file" nzRequired>附件</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <input nz-input formControlName="file" type="hidden" />
+          <nz-upload
+            [(nzFileList)]="files"
+            [nzBeforeUpload]="beforeUpload"
+            (nzChange)="changeFile($event)"
+          >
+            <button id="form-file" nz-button type="button">
+              <i nz-icon nzType="upload"></i>请选择附件
+            </button>
+          </nz-upload>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-content>
+</ng-template>
+<ng-template #modalFooter>
+  <button nz-button nzType="default" (click)="closeAttachmentModal()">
+    取消
+  </button>
+  <button
+    nz-button
+    nzType="primary"
+    [disabled]="saveAttachmentDisabled"
+    [nzLoading]="saveAttachmentLoading"
+    (click)="saveAttachmentForm()"
+  >
+    保存
+  </button>
+</ng-template>
+<!-- attachment modal template end -->

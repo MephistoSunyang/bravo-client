@@ -30,4 +30,8 @@ export class LogsComponent implements OnInit {
       this.frameworkService.messageService.error(result.message || this.messages.GET_LOGS_FAILED);
     }
   }
+
+  public async downloadLog(log: string) {
+    this.frameworkService.httpService.downloadWithToken(`api/v1/system/logs/${log}`, log);
+  }
 }

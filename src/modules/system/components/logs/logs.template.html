@@ -19,18 +19,17 @@
     <tr *ngFor="let log of logsTable.data">
       <td>{{ log }}</td>
       <td class="tac">
-        <a
+        <button
           nz-button
           nzType="primary"
           nzShape="circle"
           nzSize="small"
-          [href]="'api/v1/system/logs/'+log"
-          target="_blank"
           nz-tooltip
           nzTooltipTitle="点击下载"
+          (click)="downloadLog(log)"
         >
           <i nz-icon nzType="download" nzTheme="outline"></i>
-        </a>
+        </button>
       </td>
     </tr>
   </tbody>

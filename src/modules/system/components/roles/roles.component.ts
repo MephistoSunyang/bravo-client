@@ -21,6 +21,10 @@ import { ROLES_MESSAGE } from './roles.message';
 })
 export class RolesComponent implements OnInit {
   public messages = ROLES_MESSAGE;
+  public features: FeatureModel[] = [];
+  public roleGroups: RoleGroupModel[] = [];
+  public featureOptions: NzSelectOptionInterface[] = [];
+  public roleGroupOptions: NzSelectOptionInterface[] = [];
   public searchRoleForm: FormGroup;
   public roles: RoleModel[] = [];
   public rolesTotal = 0;
@@ -29,10 +33,6 @@ export class RolesComponent implements OnInit {
   public rolesLoading = false;
   public deletedRoleId = 0;
   public roleModalVisible = false;
-  public features: FeatureModel[] = [];
-  public roleGroups: RoleGroupModel[] = [];
-  public featureOptions: NzSelectOptionInterface[] = [];
-  public roleGroupOptions: NzSelectOptionInterface[] = [];
   public roleForm: FormGroup;
   public role: RoleModel | undefined;
   public saveRoleLoading = false;

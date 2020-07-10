@@ -15,6 +15,7 @@ import {
   RoleGroupsComponent,
   RolesComponent,
   UsersComponent,
+  AttachmentsComponent,
 } from './components';
 import { AuthenticationGuard } from './guards';
 import { LayoutService, MenuService } from './services';
@@ -23,6 +24,7 @@ import { SystemRoutesModule } from './system-routes.module';
 const modules = [SharedModule, FrameworkModule, SystemRoutesModule];
 const components = [
   ActionsComponent,
+  AttachmentsComponent,
   ConfigsComponent,
   FeaturesComponent,
   HomeComponent,

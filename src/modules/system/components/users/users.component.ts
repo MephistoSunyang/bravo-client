@@ -9,6 +9,7 @@ import {
   HTTP_STATUS_CODE_ENUM,
   IDataAndCount,
   IResult,
+  ISelectOption,
   logger,
 } from '../../../framework';
 import { RoleModel, UserModel } from '../../models';
@@ -20,7 +21,7 @@ import { USERS_MESSAGE } from './users.message';
 })
 export class UsersComponent implements OnInit {
   public messages = USERS_MESSAGE;
-  public types: string[] = [];
+  public types: ISelectOption[] = [];
   public typeOptions: NzSelectOptionInterface[] = [];
   public roles: RoleModel[] = [];
   public roleOptions: NzSelectOptionInterface[] = [];
@@ -96,7 +97,7 @@ export class UsersComponent implements OnInit {
   private async getOptions() {
     const [rolesResult, typesResult] = await Promise.all([
       this.httpClient.get<IResult<RoleModel[]>>('api/v1/system/roles').toPromise(),
-      this.httpClient.get<IResult<string[]>>('api/v1/system/users/types').toPromise(),
+      this.httpClient.get<IResult<ISelectOption[]>>('api/v1/system/users/types').toPromise(),
     ]);
     if (
       rolesResult.code === HTTP_STATUS_CODE_ENUM.OK &&
@@ -107,8 +108,10 @@ export class UsersComponent implements OnInit {
       this.roleOptions = this.frameworkService.formService.getSelectOptionsByCollections(
         rolesResult.content,
       );
-      this.typeOptions = this.frameworkService.formService.getSelectOptionsByArray(
-        _.concat(['local'], typesResult.content),
+      this.typeOptions = this.frameworkService.formService.getSelectOptionsByCollections(
+        typesResult.content,
+        'value',
+        'name',
       );
       logger.info('[roles]', this.roles);
       logger.info('[roleOptions]', this.roleOptions);

@@ -20,6 +20,7 @@ import { ACTIONS_MESSAGE } from './actions.message';
 })
 export class ActionsComponent implements OnInit {
   public messages = ACTIONS_MESSAGE;
+  public methodOptions: NzSelectOptionInterface[] = [];
   public searchActionForm: FormGroup;
   public actions: ActionModel[] = [];
   public actionsTotal = 0;
@@ -28,7 +29,6 @@ export class ActionsComponent implements OnInit {
   public actionsLoading = false;
   public deletedActionId = 0;
   public actionModalVisible = false;
-  public methodOptions: NzSelectOptionInterface[] = [];
   public actionForm: FormGroup;
   public action: ActionModel | undefined;
   public saveActionLoading = false;

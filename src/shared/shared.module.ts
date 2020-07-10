@@ -22,6 +22,7 @@ import {
   NzTableModule,
   NzToolTipModule,
   NzTreeSelectModule,
+  NzUploadModule,
 } from 'ng-zorro-antd';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { FrameworkModule } from '../modules/framework';
@@ -45,6 +46,7 @@ const nzModules = [
   NzTableModule,
   NzToolTipModule,
   NzTreeSelectModule,
+  NzUploadModule,
   NzSpaceModule,
 ];
 const modules = [
