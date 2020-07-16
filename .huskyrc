@@ -1,5 +1,3 @@
 {
-  "hooks": {
-    "commit-msg": "npm run commitlint"
-  }
+  "hooks": {}
 }
