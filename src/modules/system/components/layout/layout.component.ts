@@ -76,12 +76,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   public backHome() {
-    this.frameworkService.routeService.redirect(environment.index);
+    this.frameworkService.routerService.redirect(environment.homePath);
   }
 
   public async logout() {
-    this.frameworkService.sessionService.remove('token');
+    this.frameworkService.sessionService.remove('accessToken');
     await this.frameworkService.messageService.info(this.messages.LOGOUT_SUCCEED);
-    this.frameworkService.routeService.redirect('/login');
+    this.frameworkService.routerService.redirect('/login');
   }
 }

@@ -2,10 +2,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { NzMessageModule } from 'ng-zorro-antd';
 import {
+  HttpAccessTokenInterceptor,
   HttpExceptionInterceptor,
   HttpLoggerInterceptor,
   HttpTimestampInterceptor,
-  HttpTokenInterceptor,
 } from './interceptors';
 import { FindPipe, ToBooleanPipe, ToDatePipe, ToSizePipe, ToStringPipe, ToTimePipe } from './pipes';
 import {
@@ -24,7 +24,7 @@ const pipes = [FindPipe, ToBooleanPipe, ToDatePipe, ToSizePipe, ToStringPipe, To
 const interceptors = [
   { provide: HTTP_INTERCEPTORS, useClass: HttpLoggerInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: HttpTimestampInterceptor, multi: true },
-  { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: HttpAccessTokenInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: HttpExceptionInterceptor, multi: true },
 ];
 const services = [

@@ -12,7 +12,7 @@ export class FrameworkService {
     public readonly formService: FormService,
     public readonly httpService: HttpService,
     public readonly messageService: MessageService,
-    public readonly routeService: RouterService,
+    public readonly routerService: RouterService,
     public readonly sessionService: SessionService,
     public readonly storageService: StorageService,
   ) {}

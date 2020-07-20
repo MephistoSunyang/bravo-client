@@ -14,7 +14,7 @@ import {
   RolesComponent,
   UsersComponent,
 } from './components';
-import { AuthenticationGuard } from './guards';
+import { AccessTokenGuard } from './guards';
 
 const routes: Route[] = [
   {
@@ -34,8 +34,8 @@ const routes: Route[] = [
       { path: 'logs', component: LogsComponent },
       { path: 'attachments', component: AttachmentsComponent },
     ],
-    canActivate: [AuthenticationGuard],
-    canActivateChild: [AuthenticationGuard],
+    canActivate: [AccessTokenGuard],
+    canActivateChild: [AccessTokenGuard],
   },
 ];
 

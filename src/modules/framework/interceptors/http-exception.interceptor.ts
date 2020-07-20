@@ -13,14 +13,14 @@ import { catchError } from 'rxjs/operators';
 import { HTTP_STATUS_CODE_ENUM } from '../enums';
 import { IResult } from '../interfaces';
 import { logger } from '../logger';
-import { MessageService, RouterService } from '../services';
+import { RouterService, SessionService } from '../services';
 
 @Injectable()
 export class HttpExceptionInterceptor implements HttpInterceptor {
   constructor(
     private readonly location: PlatformLocation,
-    private readonly messageService: MessageService,
     private readonly routerService: RouterService,
+    private readonly sessionService: SessionService,
   ) {}
 
   public intercept(request: HttpRequest<IResult>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -35,25 +35,21 @@ export class HttpExceptionInterceptor implements HttpInterceptor {
           if (request.headers.get('X-Not-Exception') === 'true') {
             return of(response);
           }
-          const redirectUrl = this.routerService.encodeUrl(
-            `${this.location.pathname}${this.location.search}`,
-          );
+          const redirectUrl = `${this.location.pathname}${this.location.search}`;
           switch (error.status) {
             case HTTP_STATUS_CODE_ENUM.BAD_REQUEST:
-              if (response.body && response.body.message) {
-                this.messageService.error(response.body.message);
-                return throwError(response);
-              } else {
-                return of(response);
-              }
+              return of(response);
             case HTTP_STATUS_CODE_ENUM.UNAUTHORIZED:
-              this.routerService.redirect('/unauthorized', { queryParams: { redirectUrl } });
+              this.sessionService.set('redirectUrl', redirectUrl);
+              this.routerService.redirect('/unauthorized');
               return throwError(response);
             case HTTP_STATUS_CODE_ENUM.FORBIDDEN:
-              this.routerService.redirect('/forbidden', { queryParams: { redirectUrl } });
+              this.sessionService.set('redirectUrl', redirectUrl);
+              this.routerService.redirect('/forbidden');
               return throwError(response);
             case HTTP_STATUS_CODE_ENUM.INTERNAL_SERVER_ERROR:
-              this.routerService.redirect('/internalServerError', { queryParams: { redirectUrl } });
+              this.sessionService.set('redirectUrl', redirectUrl);
+              this.routerService.redirect('/internalServerError');
               return throwError(response);
             default:
               return of(response);

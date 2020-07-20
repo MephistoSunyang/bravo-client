@@ -5,13 +5,13 @@ import { IResult } from '../interfaces';
 import { SessionService } from '../services';
 
 @Injectable()
-export class HttpTokenInterceptor implements HttpInterceptor {
+export class HttpAccessTokenInterceptor implements HttpInterceptor {
   constructor(private readonly sessionService: SessionService) {}
 
   public intercept(request: HttpRequest<IResult>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.sessionService.get('token');
-    if (token) {
-      request = request.clone({ setHeaders: { Authorization: `bearer ${token}` } });
+    const accessToken = this.sessionService.get('accessToken');
+    if (accessToken) {
+      request = request.clone({ setHeaders: { Authorization: `bearer ${accessToken}` } });
     }
     return next.handle(request);
   }

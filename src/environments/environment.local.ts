@@ -8,7 +8,8 @@ export const environment: IEnvironment = {
   debug: 'DEBUG:,INFO:,ERROR:',
   production: false,
   ttl: 86400,
-  index: '/system',
+  homePath: '/home',
+  loginPath: '/auth/v1/lilly/accessToken',
 };
 
 /*

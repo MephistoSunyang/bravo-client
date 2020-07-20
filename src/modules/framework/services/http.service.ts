@@ -24,8 +24,8 @@ export class HttpService {
     const anchor = document.createElement('a');
     document.body.appendChild(anchor);
     const headers = new Headers();
-    const token = this.sessionService.get('token');
-    headers.append('Authorization', `bearer ${token}`);
+    const accessToken = this.sessionService.get('accessToken');
+    headers.append('Authorization', `bearer ${accessToken}`);
     fetch(url, { headers })
       .then((response) => response.blob())
       .then((blobby) => {

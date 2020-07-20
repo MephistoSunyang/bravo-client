@@ -4,5 +4,6 @@ export const environment: IEnvironment = {
   debug: 'INFO:,ERROR:',
   production: true,
   ttl: 86400,
-  index: '/system',
+  homePath: '/system',
+  loginPath: '/login',
 };

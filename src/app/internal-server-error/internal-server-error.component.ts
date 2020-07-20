@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { environment } from '../../environments/environment.local';
-import { RouterService } from '../../modules/framework';
+import { FrameworkService } from '../../modules/framework';
 
 @Component({
   templateUrl: './internal-server-error.template.html',
 })
 export class InternalServerErrorComponent {
-  constructor(private readonly routerService: RouterService) {}
+  constructor(private readonly frameworkService: FrameworkService) {}
 
   public goToHome() {
-    this.routerService.redirect(environment.index);
+    this.frameworkService.routerService.redirect(environment.homePath);
   }
 }

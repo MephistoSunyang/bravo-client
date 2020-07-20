@@ -1,30 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { RouterService } from '../../modules/framework';
+import { Component } from '@angular/core';
+import { environment } from '../../environments/environment.local';
+import { FrameworkService } from '../../modules/framework';
 
 @Component({
   templateUrl: './unauthorized.template.html',
 })
-export class UnauthorizedComponent implements OnInit {
-  public redirectUrl: string;
-
-  constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly routerService: RouterService,
-  ) {}
-
-  public ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((queries) => {
-      const { redirectUrl } = queries;
-      this.redirectUrl = this.routerService.decodeUrl(redirectUrl);
-    });
-  }
+export class UnauthorizedComponent {
+  constructor(private readonly frameworkService: FrameworkService) {}
 
   public goToLogin() {
-    this.routerService.redirect('/login', {
-      queryParams: {
-        redirectUrl: this.redirectUrl,
-      },
-    });
+    this.frameworkService.routerService.goToLogin();
   }
 }
