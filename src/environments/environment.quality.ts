@@ -1,9 +1,9 @@
 import { IEnvironment } from './environment.interface';
 
 export const environment: IEnvironment = {
-  debug: 'INFO:,ERROR:',
+  debug: 'DEBUG:,INFO:,ERROR:',
   production: true,
   ttl: 86400,
   homePath: '/system',
-  loginPath: '/login',
+  loginPath: '/auth/v1/lilly/accessToken',
 };

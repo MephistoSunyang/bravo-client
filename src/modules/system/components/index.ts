@@ -1,7 +1,6 @@
 export * from './actions/actions.component';
 export * from './attachments/attachments.component';
 export * from './configs/configs.component';
-export * from './features/features.component';
 export * from './home/home.component';
 export * from './layout/layout.component';
 export * from './logs/logs.component';

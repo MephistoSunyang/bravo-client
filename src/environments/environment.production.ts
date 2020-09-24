@@ -5,5 +5,5 @@ export const environment: IEnvironment = {
   production: true,
   ttl: 86400,
   homePath: '/system',
-  loginPath: '/login',
+  loginPath: '/auth/v1/lilly/accessToken',
 };

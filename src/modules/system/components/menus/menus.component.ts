@@ -62,6 +62,21 @@ export class MenusComponent implements OnInit {
     this.menuForm.statusChanges.subscribe((status) => {
       this.saveMenuDisabled = status !== 'VALID';
     });
+    this.menuForm.get('parentId')?.valueChanges.subscribe((parentId) => {
+      const groupControl = this.menuForm.get('group');
+      if (parentId) {
+        const parentMenu = _.find(this.menus, { id: _.toNumber(parentId) });
+        if (parentMenu) {
+          groupControl?.setValue(parentMenu.group);
+          groupControl?.updateValueAndValidity();
+          groupControl?.disable();
+        }
+      } else {
+        groupControl?.setValue(null);
+        groupControl?.updateValueAndValidity();
+        groupControl?.enable();
+      }
+    });
   }
 
   private async getOptions() {

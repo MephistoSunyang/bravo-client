@@ -195,15 +195,44 @@
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
-        <nz-form-label nzSpan="4" nzFor="form-feature-ids">功能</nz-form-label>
+        <nz-form-label nzSpan="4" nzFor="form-menu-ids">菜单</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-tree-select
+            id="form-menu-ids"
+            formControlName="menuIds"
+            [nzNodes]="menuOptions"
+            nzMultiple
+            nzAllowClear
+            nzCheckable
+            nzPlaceHolder="请选择菜单"
+          >
+          </nz-tree-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-permission-ids">权限</nz-form-label>
         <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
           <nz-select
-            id="form-feature-ids"
-            formControlName="featureIds"
-            [nzOptions]="featureOptions"
+            id="form-permission-ids"
+            formControlName="permissionIds"
+            [nzOptions]="permissionOptions"
             nzMode="multiple"
             nzAllowClear
-            nzPlaceHolder="请选择功能"
+            nzPlaceHolder="请选择权限"
+          >
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-action-ids">接口</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-select
+            id="form-action-ids"
+            formControlName="actionIds"
+            [nzOptions]="actionOptions"
+            nzMode="multiple"
+            nzAllowClear
+            nzPlaceHolder="请选择接口"
           >
           </nz-select>
         </nz-form-control>

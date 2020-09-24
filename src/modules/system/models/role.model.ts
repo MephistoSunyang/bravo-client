@@ -1,5 +1,7 @@
+import { ActionModel } from './action.model';
 import { BaseModel } from './base.model';
-import { FeatureModel } from './feature.model';
+import { MenuModel } from './menu.model';
+import { PermissionModel } from './permission.model';
 
 export class RoleModel extends BaseModel {
   public roleGroupId: number;
@@ -8,7 +10,11 @@ export class RoleModel extends BaseModel {
 
   public name: string;
 
-  public features?: FeatureModel[];
-
   public comment: string | null;
+
+  public menus?: MenuModel[];
+
+  public permissions?: PermissionModel[];
+
+  public actions?: ActionModel[];
 }

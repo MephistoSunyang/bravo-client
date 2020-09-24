@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import _ from 'lodash';
-import { NzSelectOptionInterface } from 'ng-zorro-antd';
+import { NzSelectOptionInterface, NzTreeNodeOptions } from 'ng-zorro-antd';
 import { of } from 'rxjs';
 import { NzValidators } from '../../../../shared';
 import {
@@ -12,7 +12,7 @@ import {
   IResult,
   logger,
 } from '../../../framework';
-import { FeatureModel, RoleGroupModel, RoleModel } from '../../models';
+import { ActionModel, MenuModel, PermissionModel, RoleGroupModel, RoleModel } from '../../models';
 import { LayoutService } from '../../services';
 import { ROLES_MESSAGE } from './roles.message';
 
@@ -21,10 +21,14 @@ import { ROLES_MESSAGE } from './roles.message';
 })
 export class RolesComponent implements OnInit {
   public messages = ROLES_MESSAGE;
-  public features: FeatureModel[] = [];
   public roleGroups: RoleGroupModel[] = [];
-  public featureOptions: NzSelectOptionInterface[] = [];
+  public menus: MenuModel[] = [];
+  public permissions: PermissionModel[] = [];
+  public actions: ActionModel[] = [];
   public roleGroupOptions: NzSelectOptionInterface[] = [];
+  public menuOptions: NzTreeNodeOptions[] = [];
+  public permissionOptions: NzSelectOptionInterface[] = [];
+  public actionOptions: NzSelectOptionInterface[] = [];
   public searchRoleForm: FormGroup;
   public roles: RoleModel[] = [];
   public rolesTotal = 0;
@@ -74,7 +78,9 @@ export class RolesComponent implements OnInit {
       ),
       name: new FormControl(null, [NzValidators.required(this.messages.NAME_REQUIRED)]),
       comment: new FormControl(null),
-      featureIds: new FormControl(null),
+      menuIds: new FormControl(null),
+      permissionIds: new FormControl(null),
+      actionIds: new FormControl(null),
     });
     this.roleForm.statusChanges.subscribe((status) => {
       this.saveRoleDisabled = status !== 'VALID';
@@ -82,26 +88,43 @@ export class RolesComponent implements OnInit {
   }
 
   private async getOptions() {
-    const [roleGroupsResult, featuresResult] = await Promise.all([
+    const [roleGroupsResult, menusResult, permissionsResult, actionsResult] = await Promise.all([
       this.httpClient.get<IResult<RoleGroupModel[]>>('api/v1/system/roleGroups').toPromise(),
-      this.httpClient.get<IResult<FeatureModel[]>>('api/v1/system/features').toPromise(),
+      this.httpClient.get<IResult<MenuModel[]>>('api/v1/system/menus').toPromise(),
+      this.httpClient.get<IResult<PermissionModel[]>>('api/v1/system/permissions').toPromise(),
+      this.httpClient.get<IResult<ActionModel[]>>('api/v1/system/actions').toPromise(),
     ]);
     if (
       roleGroupsResult.code === HTTP_STATUS_CODE_ENUM.OK &&
-      featuresResult.code === HTTP_STATUS_CODE_ENUM.OK
+      menusResult.code === HTTP_STATUS_CODE_ENUM.OK &&
+      permissionsResult.code === HTTP_STATUS_CODE_ENUM.OK &&
+      actionsResult.code === HTTP_STATUS_CODE_ENUM.OK
     ) {
       this.roleGroups = roleGroupsResult.content;
-      this.features = featuresResult.content;
+      this.menus = menusResult.content;
+      this.permissions = permissionsResult.content;
+      this.actions = actionsResult.content;
       this.roleGroupOptions = this.frameworkService.formService.getSelectOptionsByCollections(
         roleGroupsResult.content,
       );
-      this.featureOptions = this.frameworkService.formService.getSelectOptionsByCollections(
-        featuresResult.content,
+      this.menuOptions = this.frameworkService.formService.getTreeNodeOptions(
+        menusResult.content,
+        0,
+      );
+      this.permissionOptions = this.frameworkService.formService.getSelectOptionsByCollections(
+        permissionsResult.content,
+      );
+      this.actionOptions = this.frameworkService.formService.getSelectOptionsByCollections(
+        actionsResult.content,
       );
       logger.info('[roleGroups]', this.roleGroups);
-      logger.info('[features]', this.features);
+      logger.info('[menus]', this.menus);
+      logger.info('[permissions]', this.permissions);
+      logger.info('[actions]', this.actions);
       logger.info('[roleGroupOptions]', this.roleGroupOptions);
-      logger.info('[featureOptions]', this.featureOptions);
+      logger.info('[menuOptions]', this.menuOptions);
+      logger.info('[permissionOptions]', this.permissionOptions);
+      logger.info('[actionOptions]', this.actionOptions);
     } else {
       this.frameworkService.messageService.error(this.messages.GET_OPTIONS_FAILED);
     }
@@ -109,16 +132,30 @@ export class RolesComponent implements OnInit {
 
   private getParams() {
     const params = { ...this.roleForm.value };
-    const { featureIds } = this.roleForm.value;
+    const { menuIds, permissionIds, actionIds } = this.roleForm.value;
     if (this.role) {
       params.id = this.role.id;
     }
-    if (featureIds && featureIds.length !== 0) {
-      const features = _.chain(featureIds)
-        .map((featureId) => _.find(this.features, { id: _.toNumber(featureId) }))
+    if (menuIds && menuIds.length !== 0) {
+      const menus = _.chain(menuIds)
+        .map((menuId) => _.find(this.menus, { id: _.toNumber(menuId) }))
         .compact()
         .value();
-      params.features = features;
+      params.menus = menus;
+    }
+    if (permissionIds && permissionIds.length !== 0) {
+      const permissions = _.chain(permissionIds)
+        .map((permissionId) => _.find(this.permissions, { id: _.toNumber(permissionId) }))
+        .compact()
+        .value();
+      params.permissions = permissions;
+    }
+    if (actionIds && actionIds.length !== 0) {
+      const actions = _.chain(actionIds)
+        .map((actionId) => _.find(this.actions, { id: _.toNumber(actionId) }))
+        .compact()
+        .value();
+      params.actions = actions;
     }
     logger.info('[params]', params);
     return params;
@@ -224,7 +261,9 @@ export class RolesComponent implements OnInit {
         code: role.code,
         name: role.name,
         comment: role.comment,
-        featureIds: _.map(role.features, (feature) => _.toString(feature.id)),
+        menuIds: _.map(role.menus, (menu) => _.toString(menu.id)),
+        permissionIds: _.map(role.permissions, (permission) => _.toString(permission.id)),
+        actionIds: _.map(role.actions, (action) => _.toString(action.id)),
       };
       logger.info('role', role);
     }
