@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { environment } from '../../environments/environment.local';
-import { FrameworkService, HTTP_STATUS_CODE_ENUM, IResult } from '../../modules/framework';
+import { FrameworkService, HTTP_STATUS_CODE_ENUM, IResult, IToken } from '../../modules/framework';
 import { NzValidators } from '../../shared';
 import { LOGIN_MESSAGE } from './login.message';
 
@@ -36,12 +36,12 @@ export class LoginComponent implements OnInit {
       return;
     }
     const result = await this.httpClient
-      .post<IResult>('auth/v1/accessToken', this.loginForm.value, {
+      .post<IResult<IToken>>('auth/v1/token', this.loginForm.value, {
         headers: { 'X-Not-Exception': 'true' },
       })
       .toPromise();
     if (result.code === HTTP_STATUS_CODE_ENUM.CREATED) {
-      this.frameworkService.sessionService.set('accessToken', result.content);
+      this.frameworkService.sessionService.set('token', result.content);
       await this.frameworkService.messageService.success(this.messages.LOGIN_SUCCEED);
       const redirectUrl = this.frameworkService.sessionService.get<string>('redirectUrl');
       if (redirectUrl) {

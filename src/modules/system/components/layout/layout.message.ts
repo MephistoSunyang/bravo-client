@@ -3,4 +3,5 @@ export const LAYOUT_MESSAGE = {
   GET_MENUS_FAILED: '获取菜单失败',
   CONFIRM_LOGOUT: '确认退出登录吗?',
   LOGOUT_SUCCEED: '退出成功!',
+  LOGOUT_FAILED: '退出失败!',
 };

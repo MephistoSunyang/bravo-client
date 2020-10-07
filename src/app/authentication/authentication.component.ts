@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment.local';
-import { FrameworkService, HTTP_STATUS_CODE_ENUM, IResult } from '../../modules/framework';
+import { FrameworkService, HTTP_STATUS_CODE_ENUM, IResult, IToken } from '../../modules/framework';
 import { AUTHENTICATION_MESSAGE } from './authentication.message';
 
 @Component({
@@ -31,11 +31,11 @@ export class AuthenticationComponent implements OnInit {
     this.isSpinning = true;
     const params = { ticket: this.ticket };
     const result = await this.httpClient
-      .get<IResult>('auth/v1/accessToken', { params })
+      .get<IResult<IToken>>('auth/v1/token', { params })
       .toPromise();
     this.isSpinning = false;
     if (result.code === HTTP_STATUS_CODE_ENUM.OK) {
-      this.frameworkService.sessionService.set('accessToken', result.content);
+      this.frameworkService.sessionService.set('token', result.content);
       const redirectUrl = this.frameworkService.sessionService.get<string>('redirectUrl');
       if (redirectUrl) {
         this.frameworkService.sessionService.remove('redirectUrl');

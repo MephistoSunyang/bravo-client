@@ -16,7 +16,6 @@ import {
   RolesComponent,
   UsersComponent,
 } from './components';
-import { AccessTokenGuard } from './guards';
 import { LayoutService, MenuService } from './services';
 import { SystemRoutesModule } from './system-routes.module';
 
@@ -35,9 +34,8 @@ const components = [
   RolesComponent,
   UsersComponent,
 ];
-const guards = [AccessTokenGuard];
 const services = [LayoutService, MenuService];
-const providers = [...guards, ...services];
+const providers = [...services];
 
 @NgModule({
   imports: [...modules],

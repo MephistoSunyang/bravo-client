@@ -7,18 +7,17 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { environment } from '../../../environments/environment.local';
-import { FrameworkService } from '../../framework';
+import { FrameworkService, IToken } from '../../framework';
 
 @Injectable()
-export class AccessTokenGuard implements CanActivate, CanActivateChild {
+export class TokenGuard implements CanActivate, CanActivateChild {
   constructor(private readonly frameworkService: FrameworkService) {}
 
   private accessTokenGuard(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> {
-    const token = this.frameworkService.sessionService.get<string>('accessToken');
+    const token = this.frameworkService.sessionService.get<IToken>('token');
     if (!token) {
       this.frameworkService.sessionService.set('redirectUrl', state.url);
       this.frameworkService.routerService.goToLogin();

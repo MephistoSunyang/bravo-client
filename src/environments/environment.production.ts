@@ -5,5 +5,5 @@ export const environment: IEnvironment = {
   production: true,
   ttl: 86400,
   homePath: '/system',
-  loginPath: '/auth/v1/azure/accessToken',
+  loginPath: '/auth/v1/azure/ticket',
 };

@@ -80,8 +80,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   public async logout() {
-    this.frameworkService.sessionService.remove('accessToken');
-    await this.frameworkService.messageService.info(this.messages.LOGOUT_SUCCEED);
-    this.frameworkService.routerService.redirect('/login');
+    const result = await this.httpClient.delete<IResult<string>>('auth/v1/token').toPromise();
+    if (result.code === HTTP_STATUS_CODE_ENUM.NO_CONTENT) {
+      this.frameworkService.sessionService.remove('token');
+      await this.frameworkService.messageService.info(this.messages.LOGOUT_SUCCEED);
+      this.frameworkService.routerService.redirect('/login');
+    } else {
+      await this.frameworkService.messageService.error(this.messages.LOGOUT_FAILED);
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import _ from 'lodash';
-import { IObject } from '../interfaces';
+import { IObject, IToken } from '../interfaces';
 import { SessionService } from './session.service';
 
 @Injectable()
@@ -24,8 +24,10 @@ export class HttpService {
     const anchor = document.createElement('a');
     document.body.appendChild(anchor);
     const headers = new Headers();
-    const accessToken = this.sessionService.get('accessToken');
-    headers.append('Authorization', `bearer ${accessToken}`);
+    const token = this.sessionService.get<IToken>('token');
+    if (token) {
+      headers.append('Authorization', `Bearer ${token.accessToken}`);
+    }
     fetch(url, { headers })
       .then((response) => response.blob())
       .then((blobby) => {
