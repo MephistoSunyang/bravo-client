@@ -1,3 +1,3 @@
 export const AUTHENTICATION_MESSAGE = {
-  GET_ACCESS_TOKEN_FAILED: '获取accessToken失败',
+  GET_TOKEN_FAILED: '获取令牌失败!',
 };

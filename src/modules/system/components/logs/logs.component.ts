@@ -32,6 +32,6 @@ export class LogsComponent implements OnInit {
   }
 
   public async downloadLog(log: string) {
-    this.frameworkService.httpService.downloadWithToken(`api/v1/system/logs/${log}`, log);
+    await this.frameworkService.httpService.downloadWithToken(`api/v1/system/logs/${log}`, log);
   }
 }

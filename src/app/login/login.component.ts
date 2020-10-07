@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
 
   public ngOnInit(): void {
     this.formBuilder();
+    this.frameworkService.sessionService.remove('token');
   }
 
   public async login(): Promise<void> {

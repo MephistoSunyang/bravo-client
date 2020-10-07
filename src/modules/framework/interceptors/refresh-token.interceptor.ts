@@ -6,31 +6,27 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import moment from 'moment';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { HTTP_STATUS_CODE_ENUM, REQUEST_METHOD_ENUM } from '../enums';
 import { IResult, IToken } from '../interfaces';
-import { SessionService } from '../services';
+import { HttpService, SessionService } from '../services';
 
 @Injectable()
 export class RefreshTokenInterceptor implements HttpInterceptor {
   constructor(
     private readonly httpClient: HttpClient,
+    private readonly httpService: HttpService,
     private readonly sessionService: SessionService,
   ) {}
-
-  private getExpiresIn(expiresIn: number) {
-    return moment(expiresIn).subtract(5, 'minute').toDate().getTime();
-  }
 
   public intercept(request: HttpRequest<IResult>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.sessionService.get<IToken>('token');
     if (!(request.url === 'auth/v1/token' && request.method === REQUEST_METHOD_ENUM.PUT)) {
       if (token) {
         if (
-          Date.now() > this.getExpiresIn(token.accessTokenExpiresIn) &&
-          Date.now() < this.getExpiresIn(token.refreshTokenExpiresIn)
+          Date.now() > this.httpService.getExpiresIn(token.accessTokenExpiresIn) &&
+          Date.now() < this.httpService.getExpiresIn(token.refreshTokenExpiresIn)
         ) {
           const body = {
             accessToken: token.accessToken,

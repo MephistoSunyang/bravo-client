@@ -23,6 +23,12 @@ export class HttpExceptionInterceptor implements HttpInterceptor {
     private readonly sessionService: SessionService,
   ) {}
 
+  private upsertRedirectUrl(redirectUrl: string): void {
+    if (!this.sessionService.get('redirectUrl')) {
+      this.sessionService.set('redirectUrl', redirectUrl);
+    }
+  }
+
   public intercept(request: HttpRequest<IResult>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       catchError((error) => {
@@ -40,15 +46,15 @@ export class HttpExceptionInterceptor implements HttpInterceptor {
             case HTTP_STATUS_CODE_ENUM.BAD_REQUEST:
               return of(response);
             case HTTP_STATUS_CODE_ENUM.UNAUTHORIZED:
-              this.sessionService.set('redirectUrl', redirectUrl);
+              this.upsertRedirectUrl(redirectUrl);
               this.routerService.redirect('/unauthorized');
               return throwError(response);
             case HTTP_STATUS_CODE_ENUM.FORBIDDEN:
-              this.sessionService.set('redirectUrl', redirectUrl);
+              this.upsertRedirectUrl(redirectUrl);
               this.routerService.redirect('/forbidden');
               return throwError(response);
             case HTTP_STATUS_CODE_ENUM.INTERNAL_SERVER_ERROR:
-              this.sessionService.set('redirectUrl', redirectUrl);
+              this.upsertRedirectUrl(redirectUrl);
               this.routerService.redirect('/internalServerError');
               return throwError(response);
             default:

@@ -24,10 +24,10 @@ export class AuthenticationComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe((queries) => {
       this.ticket = queries.ticket;
     });
-    this.getAccessToken();
+    this.getToken();
   }
 
-  public async getAccessToken() {
+  public async getToken() {
     this.isSpinning = true;
     const params = { ticket: this.ticket };
     const result = await this.httpClient
@@ -43,7 +43,7 @@ export class AuthenticationComponent implements OnInit {
       this.frameworkService.routerService.redirect(redirectUrl || environment.homePath);
     } else {
       await this.frameworkService.messageService.error(
-        result.message || this.messages.GET_ACCESS_TOKEN_FAILED,
+        result.message || this.messages.GET_TOKEN_FAILED,
       );
     }
   }
