@@ -1,8 +1,8 @@
 <!-- user search template begin -->
 <ng-template #searchUsersTable>
   <form nz-form [formGroup]="searchUserForm" (submit)="getUsersAndCount(1)">
-    <div nz-row nzGutter="24">
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+    <nz-row nzGutter="16">
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-username">
             用&nbsp;&nbsp;户&nbsp;&nbsp;名
@@ -16,8 +16,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-nickname">
             昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称
@@ -31,8 +31,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-realname">
             真实姓名
@@ -46,8 +46,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-phone">
             手机号码
@@ -61,8 +61,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-email">
             电子邮箱
@@ -76,24 +76,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
-        <nz-form-item>
-          <nz-form-label nzFor="search-type">
-            用户类型
-          </nz-form-label>
-          <nz-form-control>
-            <nz-select
-              id="search-type"
-              formControlName="type"
-              [nzOptions]="typeOptions"
-              nzAllowClear
-              nzPlaceHolder="请选择用户类型"
-            ></nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-role-id">
             角&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色
@@ -108,12 +92,11 @@
             ></nz-select>
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div
-        nz-col
-        [nzSm]="{ span: 12, push: 0 }"
-        [nzMd]="{ span: 8, push: 8 }"
-        [nzLg]="{ span: 6, push: 0 }"
+      </nz-col>
+      <nz-col
+        [nzSm]="{ span: 12, push: 12 }"
+        [nzMd]="{ span: 8, push: 16 }"
+        [nzLg]="{ span: 6, push: 6 }"
       >
         <nz-form-item class="flr">
           <nz-space>
@@ -127,8 +110,8 @@
             </nz-space-item>
           </nz-space>
         </nz-form-item>
-      </div>
-    </div>
+      </nz-col>
+    </nz-row>
   </form>
 </ng-template>
 <!-- user search template end -->
@@ -209,7 +192,7 @@
               nzSize="small"
               nz-tooltip
               nzTooltipTitle="修改密码"
-              (click)="openPasswordModel(user.id)"
+              (click)="openPasswordModel(user)"
             >
               <i nz-icon nzType="key" nzTheme="outline"></i>
             </button>
@@ -259,30 +242,6 @@
             nz-input
             formControlName="username"
             placeholder="请输入用户名"
-          />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item *ngIf="!user">
-        <nz-form-label nzSpan="4" nzFor="form-password" nzRequired>密码</nz-form-label>
-        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
-          <input
-            id="form-password"
-            nz-input
-            formControlName="password"
-            type="password"
-            placeholder="请输入用户名"
-          />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item *ngIf="!user">
-        <nz-form-label nzSpan="4" nzFor="form-confirm-password" nzRequired>确认密码</nz-form-label>
-        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
-          <input
-            id="form-confirm-password"
-            nz-input
-            formControlName="confirmPassword"
-            type="password"
-            placeholder="请再次输入密码"
           />
         </nz-form-control>
       </nz-form-item>
@@ -339,6 +298,56 @@
           ></textarea>
         </nz-form-control>
       </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4">登录关系</nz-form-label>
+        <nz-form-control nzSpan="20" formArrayName="providers">
+          <nz-content
+            *ngFor="let providerForm of providersForm.controls; let providerIndex = index;"
+          >
+            <nz-row [formGroupName]="providerIndex" nzGutter="8">
+              <nz-col nzSm="10">
+                <nz-form-item>
+                  <nz-form-control nzValidateStatus nzHasFeedback>
+                    <input nz-input formControlName="type" placeholder="请输入类型" />
+                  </nz-form-control>
+                </nz-form-item>
+              </nz-col>
+              <nz-col nzSm="12">
+                <nz-form-item>
+                  <nz-form-control nzValidateStatus nzHasFeedback>
+                    <input nz-input formControlName="key" placeholder="请输入类型" />
+                  </nz-form-control>
+                </nz-form-item>
+              </nz-col>
+              <nz-col nzSm="2">
+                <button
+                  class="remove-provider-button"
+                  type="button"
+                  nz-button
+                  nzType="primary"
+                  nzShape="circle"
+                  nzSize="small"
+                  nzDanger
+                  nz-tooltip
+                  nzTooltipTitle="移除该行"
+                  (click)="removeProviderItem(providerIndex)"
+                >
+                  <i nz-icon nzType="minus" nzTheme="outline"></i>
+                </button>
+              </nz-col>
+            </nz-row>
+          </nz-content>
+          <button
+            class="add-provider-button"
+            type="button"
+            nz-button
+            nzType="primary"
+            (click)="addProviderItem()"
+          >
+            增加登录关系
+          </button>
+        </nz-form-control>
+      </nz-form-item>
     </form>
   </nz-content>
 </ng-template>
@@ -358,10 +367,10 @@
 </ng-template>
 <!-- user modal template end -->
 
-<!-- change password modal template begin -->
+<!-- password modal template begin -->
 <nz-modal
   [(nzVisible)]="passwordModalVisible"
-  nzTitle="修改密码"
+  nzTitle="更新密码"
   [nzContent]="passwordModalContent"
   [nzFooter]="passwordModalFooter"
   (nzOnCancel)="closePasswordModel()"
@@ -370,7 +379,7 @@
 <ng-template #passwordModalContent>
   <nz-content>
     <form nz-form [formGroup]="passwordForm" (submit)="savePasswordForm()">
-      <nz-form-item>
+      <nz-form-item *ngIf="passwordHasPassword">
         <nz-form-label nzSpan="4" nzFor="password-form-password" nzRequired>旧密码</nz-form-label>
         <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
           <input
@@ -383,9 +392,9 @@
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
-        <nz-form-label nzSpan="4" nzFor="password-form-new-password" nzRequired
-          >新密码</nz-form-label
-        >
+        <nz-form-label nzSpan="4" nzFor="password-form-new-password" nzRequired>
+          新密码
+        </nz-form-label>
         <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
           <input
             id="password-form-new-password"
@@ -420,11 +429,11 @@
   <button
     nz-button
     nzType="primary"
-    [disabled]="saveUserDisabled"
-    [nzLoading]="saveUserLoading"
+    [disabled]="passwordDisabled"
+    [nzLoading]="passwordLoading"
     (click)="savePasswordForm()"
   >
     保存
   </button>
 </ng-template>
-<!-- change password modal template end -->
+<!-- password modal template end -->

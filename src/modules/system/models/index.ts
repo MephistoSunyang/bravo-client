@@ -1,5 +1,4 @@
 export * from './action.model';
-export * from './attachment.model';
 export * from './base.model';
 export * from './config.model';
 export * from './feature.model';
@@ -7,4 +6,5 @@ export * from './menu.model';
 export * from './permission.model';
 export * from './role-group.model';
 export * from './role.model';
+export * from './user-provider.model';
 export * from './user.model';

@@ -4,10 +4,10 @@ import _ from 'lodash';
 import { MenuModel } from '../../models';
 
 @Component({
-  selector: 'menu-list',
-  templateUrl: './menu-list.template.html',
+  selector: 'system-menus',
+  templateUrl: './system-menus.template.html',
 })
-export class MenuListComponent {
+export class SystemMenusComponent {
   @Input()
   public model: 'vertical' | 'horizontal' | 'inline' = 'vertical';
   @Input()

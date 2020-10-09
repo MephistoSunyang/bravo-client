@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { TokenGuard } from '../framework';
 import {
   ActionsComponent,
-  AttachmentsComponent,
   ConfigsComponent,
   HomeComponent,
   LayoutComponent,
@@ -13,7 +11,8 @@ import {
   RoleGroupsComponent,
   RolesComponent,
   UsersComponent,
-} from './components';
+} from './containers';
+import { TokenGuard } from './guards';
 
 const routes: Route[] = [
   {
@@ -30,7 +29,6 @@ const routes: Route[] = [
       { path: 'actions', component: ActionsComponent },
       { path: 'configs', component: ConfigsComponent },
       { path: 'logs', component: LogsComponent },
-      { path: 'attachments', component: AttachmentsComponent },
     ],
     canActivate: [TokenGuard],
     canActivateChild: [TokenGuard],

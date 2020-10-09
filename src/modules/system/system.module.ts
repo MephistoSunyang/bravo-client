@@ -2,40 +2,40 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../../shared';
 import { FrameworkModule } from '../framework';
+import { SystemMenusComponent } from './components';
 import {
   ActionsComponent,
-  AttachmentsComponent,
   ConfigsComponent,
   HomeComponent,
   LayoutComponent,
   LogsComponent,
-  MenuListComponent,
   MenusComponent,
   PermissionsComponent,
   RoleGroupsComponent,
   RolesComponent,
   UsersComponent,
-} from './components';
+} from './containers';
+import { TokenGuard } from './guards';
 import { LayoutService, MenuService } from './services';
 import { SystemRoutesModule } from './system-routes.module';
 
 const modules = [SharedModule, FrameworkModule, SystemRoutesModule];
 const components = [
   ActionsComponent,
-  AttachmentsComponent,
   ConfigsComponent,
   HomeComponent,
   LayoutComponent,
   LogsComponent,
   MenusComponent,
-  MenuListComponent,
+  SystemMenusComponent,
   PermissionsComponent,
   RoleGroupsComponent,
   RolesComponent,
   UsersComponent,
 ];
 const services = [LayoutService, MenuService];
-const providers = [...services];
+const guards = [TokenGuard];
+const providers = [...guards, ...services];
 
 @NgModule({
   imports: [...modules],

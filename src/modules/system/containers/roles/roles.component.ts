@@ -132,9 +132,12 @@ export class RolesComponent implements OnInit {
 
   private getParams() {
     const params = { ...this.roleForm.value };
-    const { menuIds, permissionIds, actionIds } = this.roleForm.value;
+    const { roleGroupId, menuIds, permissionIds, actionIds } = this.roleForm.value;
     if (this.role) {
       params.id = this.role.id;
+    }
+    if (!roleGroupId) {
+      params.roleGroupId = 0;
     }
     if (menuIds && menuIds.length !== 0) {
       const menus = _.chain(menuIds)

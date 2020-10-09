@@ -1,8 +1,25 @@
-<!-- roleGroup search template begin -->
-<ng-template #searchRoleGroupsTable>
-  <form nz-form [formGroup]="searchRoleGroupForm" (submit)="getRoleGroupsAndCount(1)">
-    <div nz-row nzGutter="24">
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+<!-- role search template begin -->
+<ng-template #searchRolesTable>
+  <form nz-form [formGroup]="searchRoleForm" (submit)="getRolesAndCount(1)">
+    <nz-row nzGutter="16">
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
+        <nz-form-item>
+          <nz-form-label nzFor="search-role-group">
+            角&nbsp;&nbsp;色&nbsp;&nbsp;组
+          </nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="search-role-group"
+              formControlName="roleGroupId"
+              [nzOptions]="roleGroupOptions"
+              nzAllowClear
+              nzPlaceHolder="请选择角色组"
+            >
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-code">
             代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码
@@ -16,8 +33,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-name">
             名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称
@@ -31,13 +48,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div
-        nz-col
-        [nzSm]="{ span: 12, push: 12 }"
-        [nzMd]="{ span: 8, push: 0 }"
-        [nzLg]="{ span: 6, push: 6 }"
-      >
+      </nz-col>
+      <nz-col nzSm="12" [nzMd]="{ span: 8, push: 16 }" [nzLg]="{ span: 6, push: 0 }">
         <nz-form-item class="flr">
           <nz-space>
             <nz-space-item>
@@ -50,32 +62,33 @@
             </nz-space-item>
           </nz-space>
         </nz-form-item>
-      </div>
-    </div>
+      </nz-col>
+    </nz-row>
   </form>
 </ng-template>
-<!-- roleGroup search template end -->
+<!-- role search template end -->
 
-<!-- roleGroup list template begin -->
+<!-- role list template begin -->
 <nz-table
-  #roleGroupsTable
-  [nzTitle]="searchRoleGroupsTable"
-  [nzLoading]="roleGroupsLoading"
-  [nzData]="roleGroups"
-  [nzTotal]="roleGroupsTotal"
-  [(nzPageIndex)]="roleGroupsPageNumber"
-  [(nzPageSize)]="roleGroupsPageSize"
+  #rolesTable
+  [nzTitle]="searchRolesTable"
+  [nzLoading]="rolesLoading"
+  [nzData]="roles"
+  [nzTotal]="rolesTotal"
+  [(nzPageIndex)]="rolesPageNumber"
+  [(nzPageSize)]="rolesPageSize"
   nzBordered
   nzSize="small"
   [nzFrontPagination]="false"
   nzShowSizeChanger
   nzHideOnSinglePage
-  (nzPageIndexChange)="getRoleGroupsAndCount($event)"
-  (nzPageSizeChange)="getRoleGroupsAndCount(roleGroupsPageNumber, $event)"
+  (nzPageIndexChange)="getRolesAndCount($event)"
+  (nzPageSizeChange)="getRolesAndCount(rolesPageNumber, $event)"
 >
   <thead>
     <tr>
       <th>id</th>
+      <th>角色组</th>
       <th>代码</th>
       <th>名称</th>
       <th class="tac" width="100">
@@ -89,7 +102,7 @@
               nzSize="small"
               nz-tooltip
               nzTooltipTitle="点击创建"
-              (click)="openRoleGroupModal()"
+              (click)="openRoleModal()"
             >
               <i nz-icon nzType="plus" nzTheme="outline"></i>
             </button>
@@ -99,10 +112,11 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let roleGroup of roleGroupsTable.data">
-      <td>{{ roleGroup.id }}</td>
-      <td>{{ roleGroup.code }}</td>
-      <td>{{ roleGroup.name }}</td>
+    <tr *ngFor="let role of rolesTable.data">
+      <td>{{ role.id }}</td>
+      <td>{{ role.roleGroupId | find: roleGroups: 'id': 'name' }}</td>
+      <td>{{ role.code }}</td>
+      <td>{{ role.name }}</td>
       <td class="tac">
         <nz-space>
           <nz-space-item>
@@ -113,7 +127,7 @@
               nzSize="small"
               nz-tooltip
               nzTooltipTitle="点击编辑"
-              (click)="openRoleGroupModal(roleGroup)"
+              (click)="openRoleModal(role)"
             >
               <i nz-icon nzType="edit" nzTheme="outline"></i>
             </button>
@@ -127,9 +141,9 @@
               nzDanger
               nz-popconfirm
               [nzTitle]="messages.DELETE_CONFIRM"
-              (nzOnConfirm)="deleteRoleGroup(roleGroup.id)"
-              [nzLoading]="deletedRoleGroupId === roleGroup.id"
-              [disabled]="deletedRoleGroupId === roleGroup.id"
+              (nzOnConfirm)="deleteRole(role.id)"
+              [nzLoading]="deletedRoleId === role.id"
+              [disabled]="deletedRoleId === role.id"
               nz-tooltip
               nzTooltipTitle="点击删除"
             >
@@ -141,20 +155,33 @@
     </tr>
   </tbody>
 </nz-table>
-<!-- roleGroup list template end -->
+<!-- role list template end -->
 
-<!-- roleGroup modal template begin -->
+<!-- role modal template begin -->
 <nz-modal
-  [(nzVisible)]="roleGroupModalVisible"
-  nzTitle="角色组管理"
+  [(nzVisible)]="roleModalVisible"
+  nzTitle="角色管理"
   [nzContent]="modalContent"
   [nzFooter]="modalFooter"
-  (nzOnCancel)="closeRoleGroupModal()"
+  (nzOnCancel)="closeRoleModal()"
 >
 </nz-modal>
 <ng-template #modalContent>
   <nz-content>
-    <form nz-form [formGroup]="roleGroupForm" (submit)="saveRoleGroupForm()">
+    <form nz-form [formGroup]="roleForm" (submit)="saveRoleForm()">
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-role-group">角色组</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-select
+            id="form-role-group"
+            formControlName="roleGroupId"
+            [nzOptions]="roleGroupOptions"
+            nzAllowClear
+            nzPlaceHolder="请选择角色组"
+          >
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
       <nz-form-item>
         <nz-form-label nzSpan="4" nzFor="form-code" nzRequired>代码</nz-form-label>
         <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
@@ -165,6 +192,49 @@
         <nz-form-label nzSpan="4" nzFor="form-name" nzRequired>名字</nz-form-label>
         <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
           <input id="form-name" nz-input formControlName="name" placeholder="请输入名字" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-menu-ids">菜单</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-tree-select
+            id="form-menu-ids"
+            formControlName="menuIds"
+            [nzNodes]="menuOptions"
+            nzMultiple
+            nzAllowClear
+            nzCheckable
+            nzPlaceHolder="请选择菜单"
+          >
+          </nz-tree-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-permission-ids">权限</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-select
+            id="form-permission-ids"
+            formControlName="permissionIds"
+            [nzOptions]="permissionOptions"
+            nzMode="multiple"
+            nzAllowClear
+            nzPlaceHolder="请选择权限"
+          >
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzSpan="4" nzFor="form-action-ids">接口</nz-form-label>
+        <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
+          <nz-select
+            id="form-action-ids"
+            formControlName="actionIds"
+            [nzOptions]="actionOptions"
+            nzMode="multiple"
+            nzAllowClear
+            nzPlaceHolder="请选择接口"
+          >
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
@@ -182,17 +252,17 @@
   </nz-content>
 </ng-template>
 <ng-template #modalFooter>
-  <button nz-button nzType="default" (click)="closeRoleGroupModal()">
+  <button nz-button nzType="default" (click)="closeRoleModal()">
     取消
   </button>
   <button
     nz-button
     nzType="primary"
-    [disabled]="saveRoleGroupDisabled"
-    [nzLoading]="saveRoleGroupLoading"
-    (click)="saveRoleGroupForm()"
+    [disabled]="saveRoleDisabled"
+    [nzLoading]="saveRoleLoading"
+    (click)="saveRoleForm()"
   >
     保存
   </button>
 </ng-template>
-<!-- roleGroup modal template end -->
+<!-- role modal template end -->

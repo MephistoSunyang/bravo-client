@@ -1,8 +1,8 @@
 <!-- config search template begin -->
 <ng-template #searchConfigsTable>
   <form nz-form [formGroup]="searchConfigForm" (submit)="getConfigsAndCount(1)">
-    <div nz-row nzGutter="24">
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+    <nz-row nzGutter="16">
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-code">
             代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码
@@ -16,8 +16,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-name">
             名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称
@@ -31,9 +31,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div
-        nz-col
+      </nz-col>
+      <nz-col
         [nzSm]="{ span: 12, push: 12 }"
         [nzMd]="{ span: 8, push: 0 }"
         [nzLg]="{ span: 6, push: 6 }"
@@ -50,8 +49,8 @@
             </nz-space-item>
           </nz-space>
         </nz-form-item>
-      </div>
-    </div>
+      </nz-col>
+    </nz-row>
   </form>
 </ng-template>
 <!-- config search template end -->

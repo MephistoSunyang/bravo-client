@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import _ from 'lodash';
 import { NzSelectOptionInterface } from 'ng-zorro-antd';
 import { NzValidators } from '../../../../shared';
@@ -9,7 +9,6 @@ import {
   HTTP_STATUS_CODE_ENUM,
   IDataAndCount,
   IResult,
-  ISelectOption,
   logger,
 } from '../../../framework';
 import { RoleModel, UserModel } from '../../models';
@@ -18,11 +17,10 @@ import { USERS_MESSAGE } from './users.message';
 
 @Component({
   templateUrl: './users.template.html',
+  styleUrls: ['./users.style.less'],
 })
 export class UsersComponent implements OnInit {
   public messages = USERS_MESSAGE;
-  public types: ISelectOption[] = [];
-  public typeOptions: NzSelectOptionInterface[] = [];
   public roles: RoleModel[] = [];
   public roleOptions: NzSelectOptionInterface[] = [];
   public searchUserForm: FormGroup;
@@ -39,9 +37,13 @@ export class UsersComponent implements OnInit {
   public saveUserDisabled = false;
   public passwordModalVisible = false;
   public passwordUserId: number | undefined;
+  public passwordHasPassword: boolean;
   public passwordForm: FormGroup;
   public passwordLoading = false;
   public passwordDisabled = false;
+  public get providersForm() {
+    return (this.userForm.get('providers') as unknown) as FormArray;
+  }
 
   constructor(
     private readonly httpClient: HttpClient,
@@ -64,12 +66,12 @@ export class UsersComponent implements OnInit {
   private userFormBuilder() {
     this.userForm = new FormGroup({
       username: new FormControl(null, [NzValidators.required(this.messages.USERNAME_REQUIRED)]),
-      password: new FormControl(null),
       confirmPassword: new FormControl(null),
       nickname: new FormControl(null),
       realname: new FormControl(null),
       phone: new FormControl(null, [NzValidators.phone(this.messages.PHONE_INVALID)]),
       email: new FormControl(null, [NzValidators.email(this.messages.EMAIL_INVALID)]),
+      providers: new FormArray([]),
       roleIds: new FormControl(null),
       comment: new FormControl(null),
     });
@@ -80,7 +82,7 @@ export class UsersComponent implements OnInit {
 
   private passwordFormBuilder() {
     this.passwordForm = new FormGroup({
-      password: new FormControl(null, [NzValidators.required(this.messages.OLD_PASSWORD_REQUIRED)]),
+      password: new FormControl(null),
       newPassword: new FormControl(null, [
         NzValidators.required(this.messages.NEW_PASSWORD_REQUIRED),
       ]),
@@ -94,24 +96,21 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  private createProviderItemForm() {
+    return new FormGroup({
+      type: new FormControl(null, [NzValidators.required(this.messages.TYPE_REQUIRED)]),
+      key: new FormControl(null, [NzValidators.required(this.messages.KEY_REQUIRED)]),
+    });
+  }
+
   private async getOptions() {
-    const [rolesResult, typesResult] = await Promise.all([
-      this.httpClient.get<IResult<RoleModel[]>>('api/v1/system/roles').toPromise(),
-      this.httpClient.get<IResult<ISelectOption[]>>('api/v1/system/users/types').toPromise(),
-    ]);
-    if (
-      rolesResult.code === HTTP_STATUS_CODE_ENUM.OK &&
-      typesResult.code === HTTP_STATUS_CODE_ENUM.OK
-    ) {
-      this.roles = rolesResult.content;
-      this.types = typesResult.content;
+    const result = await this.httpClient
+      .get<IResult<RoleModel[]>>('api/v1/system/roles')
+      .toPromise();
+    if (result.code === HTTP_STATUS_CODE_ENUM.OK) {
+      this.roles = result.content;
       this.roleOptions = this.frameworkService.formService.getSelectOptionsByCollections(
-        rolesResult.content,
-      );
-      this.typeOptions = this.frameworkService.formService.getSelectOptionsByCollections(
-        typesResult.content,
-        'value',
-        'name',
+        result.content,
       );
       logger.info('[roles]', this.roles);
       logger.info('[roleOptions]', this.roleOptions);
@@ -133,10 +132,77 @@ export class UsersComponent implements OnInit {
         .value();
       params.roles = roles;
     }
-    params.phoneConfirmed = false;
-    params.emailConfirmed = false;
     logger.info('[params]', params);
     return params;
+  }
+
+  private async createUser() {
+    const params = this.getParams();
+    const result = await this.httpClient
+      .post<IResult<UserModel>>('/api/v1/system/users', params)
+      .toPromise();
+    const succeed = result.code === HTTP_STATUS_CODE_ENUM.CREATED;
+    if (succeed) {
+      await this.frameworkService.messageService.success(this.messages.CREATE_SUCCEED);
+    } else {
+      await this.frameworkService.messageService.error(
+        result.message || this.messages.CREATE_FAILED,
+      );
+    }
+    return succeed;
+  }
+
+  private async updateUser(id: number) {
+    const params = this.getParams();
+    const result = await this.httpClient
+      .put<IResult<UserModel>>(`/api/v1/system/users/${id}`, params)
+      .toPromise();
+    const succeed = result.code === HTTP_STATUS_CODE_ENUM.OK;
+    if (succeed) {
+      await this.frameworkService.messageService.success(this.messages.UPDATE_SUCCEED);
+    } else {
+      await this.frameworkService.messageService.error(
+        result.message || this.messages.UPDATE_FAILED,
+      );
+    }
+    return succeed;
+  }
+
+  private async createUserPassword() {
+    this.saveUserLoading = true;
+    const { newPassword } = this.passwordForm.value;
+    const params = { password: newPassword };
+    const result = await this.httpClient
+      .post<IResult>(`api/v1/system/users/${this.passwordUserId}/password`, params)
+      .toPromise();
+    this.saveUserLoading = false;
+    const succeed = result.code === HTTP_STATUS_CODE_ENUM.CREATED;
+    if (succeed) {
+      await this.frameworkService.messageService.success(this.messages.CREATE_PASSWORD_SUCCEED);
+    } else {
+      await this.frameworkService.messageService.error(
+        result.message || this.messages.CREATE_PASSWORD_FAILED,
+      );
+    }
+    return succeed;
+  }
+
+  private async updateUserPassword() {
+    this.saveUserLoading = true;
+    const { password, newPassword } = this.passwordForm.value;
+    const params = { password, newPassword };
+    const result = await this.httpClient
+      .patch<IResult>(`api/v1/system/users/${this.passwordUserId}/password`, params)
+      .toPromise();
+    const succeed = result.code === HTTP_STATUS_CODE_ENUM.OK;
+    if (succeed) {
+      await this.frameworkService.messageService.success(this.messages.UPDATE_PASSWORD_SUCCEED);
+    } else {
+      await this.frameworkService.messageService.error(
+        result.message || this.messages.UPDATE_PASSWORD_FAILED,
+      );
+    }
+    return succeed;
   }
 
   public ngOnInit() {
@@ -177,38 +243,6 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  public async createUser() {
-    const params = this.getParams();
-    const result = await this.httpClient
-      .post<IResult<UserModel>>('/api/v1/system/users', params)
-      .toPromise();
-    const succeed = result.code === HTTP_STATUS_CODE_ENUM.CREATED;
-    if (succeed) {
-      await this.frameworkService.messageService.success(this.messages.CREATE_SUCCEED);
-    } else {
-      await this.frameworkService.messageService.error(
-        result.message || this.messages.CREATE_FAILED,
-      );
-    }
-    return succeed;
-  }
-
-  public async updateUser(id: number) {
-    const params = this.getParams();
-    const result = await this.httpClient
-      .put<IResult<UserModel>>(`/api/v1/system/users/${id}`, params)
-      .toPromise();
-    const succeed = result.code === HTTP_STATUS_CODE_ENUM.OK;
-    if (succeed) {
-      await this.frameworkService.messageService.success(this.messages.UPDATE_SUCCEED);
-    } else {
-      await this.frameworkService.messageService.error(
-        result.message || this.messages.UPDATE_FAILED,
-      );
-    }
-    return succeed;
-  }
-
   public async deleteUser(id: number) {
     this.deletedUserId = id;
     const result = await this.httpClient
@@ -240,6 +274,10 @@ export class UsersComponent implements OnInit {
     let form = {};
     const passwordControl = this.userForm.get('password');
     const confirmPasswordControl = this.userForm.get('confirmPassword');
+    _.each(this.providersForm.controls, () => {
+      this.providersForm.at(0).reset({});
+      this.providersForm.removeAt(0);
+    });
     if (user) {
       form = {
         username: user.username,
@@ -255,17 +293,15 @@ export class UsersComponent implements OnInit {
         confirmPasswordControl.clearValidators();
       }
       logger.info('user', user);
-    } else {
-      if (passwordControl && confirmPasswordControl) {
-        passwordControl.setValidators([NzValidators.required(this.messages.PASSWORD_REQUIRED)]);
-        confirmPasswordControl.setValidators([
-          NzValidators.required(this.messages.CONFIRM_PASSWORD_REQUIRED),
-          NzValidators.different('password', this.messages.PASSWORD_DIFFERENT),
-        ]);
-      }
     }
     setTimeout(() => {
       this.userForm.reset(form);
+      if (user && user.providers && user.providers.length !== 0) {
+        _.each(user.providers, ({ type, key }) => {
+          this.providersForm.push(this.createProviderItemForm());
+          this.providersForm.at(this.providersForm.length - 1).reset({ type, key });
+        });
+      }
     }, 0);
     this.userModalVisible = true;
   }
@@ -275,45 +311,56 @@ export class UsersComponent implements OnInit {
     this.user = undefined;
   }
 
+  public addProviderItem() {
+    this.providersForm.insert(this.providersForm.length, this.createProviderItemForm());
+    this.providersForm.at(this.providersForm.length - 1).reset({});
+  }
+
+  public removeProviderItem(index: number) {
+    this.providersForm.at(index).reset({});
+    this.providersForm.removeAt(index);
+  }
+
   public async saveUserForm() {
     this.saveUserLoading = true;
     const succeed = this.user ? await this.updateUser(this.user.id) : await this.createUser();
+    this.saveUserLoading = false;
     if (succeed) {
-      this.saveUserLoading = false;
       this.closeUserModal();
       await this.getUsersAndCount(1);
       this.layoutService.refreshMenus.emit();
-    } else {
-      this.saveUserLoading = false;
     }
   }
 
-  public openPasswordModel(userId: number) {
-    this.passwordUserId = userId;
+  public openPasswordModel(user: UserModel) {
+    this.passwordUserId = user.id;
+    this.passwordHasPassword = user.hasPassword;
+    if (this.passwordHasPassword) {
+      this.passwordForm
+        .get('password')
+        ?.setValidators([NzValidators.required(this.messages.OLD_PASSWORD_REQUIRED)]);
+    } else {
+      this.passwordForm.get('password')?.clearValidators();
+    }
     this.passwordForm.reset({});
     this.passwordModalVisible = true;
   }
 
   public closePasswordModel() {
     this.passwordModalVisible = false;
+    this.passwordHasPassword = false;
     this.passwordUserId = undefined;
   }
 
   public async savePasswordForm() {
     this.saveUserLoading = true;
-    const { password, newPassword } = this.passwordForm.value;
-    const params = { password, newPassword };
-    const result = await this.httpClient
-      .patch<IResult>(`api/v1/system/users/${this.passwordUserId}/password`, params)
-      .toPromise();
-    if (result.code === HTTP_STATUS_CODE_ENUM.OK) {
-      await this.frameworkService.messageService.success(this.messages.CHANGE_PASSWORD_SUCCEED);
-      this.closePasswordModel();
-    } else {
-      await this.frameworkService.messageService.error(
-        result.message || this.messages.CHANGE_PASSWORD_FAILED,
-      );
-    }
+    const succeed = this.passwordHasPassword
+      ? await this.updateUserPassword()
+      : await this.createUserPassword();
     this.saveUserLoading = false;
+    if (succeed) {
+      this.closePasswordModel();
+      await this.getUsersAndCount(1);
+    }
   }
 }

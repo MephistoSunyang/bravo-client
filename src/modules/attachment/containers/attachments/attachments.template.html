@@ -1,8 +1,8 @@
 <!-- attachment search template begin -->
 <ng-template #searchAttachmentsTable>
   <form nz-form [formGroup]="searchAttachmentForm" (submit)="getAttachmentsAndCount(1)">
-    <div nz-row nzGutter="24">
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+    <nz-row nzGutter="16">
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-encoding">
             编&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码
@@ -16,8 +16,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-mime-type">
             类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型
@@ -31,8 +31,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-folder-name">文件夹名</nz-form-label>
           <nz-form-control>
@@ -44,8 +44,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-file-name">文&nbsp;&nbsp;件&nbsp;&nbsp;名</nz-form-label>
           <nz-form-control>
@@ -57,8 +57,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-ext-name">后&nbsp;&nbsp;缀&nbsp;&nbsp;名</nz-form-label>
           <nz-form-control>
@@ -70,8 +70,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-storage-type">存贮方式</nz-form-label>
           <nz-form-control>
@@ -84,9 +84,8 @@
             ></nz-select>
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div
-        nz-col
+      </nz-col>
+      <nz-col
         [nzSm]="{ span: 12, push: 12 }"
         [nzMd]="{ span: 8, push: 16 }"
         [nzLg]="{ span: 6, push: 6 }"
@@ -103,8 +102,8 @@
             </nz-space-item>
           </nz-space>
         </nz-form-item>
-      </div>
-    </div>
+      </nz-col>
+    </nz-row>
   </form>
 </ng-template>
 <!-- attachment search template end -->
@@ -177,7 +176,7 @@
               nz-tooltip
               nzTooltipTitle="点击下载"
               target="_blank"
-              [href]="'resources/' + attachment.path"
+              [href]="attachment.path"
             >
               <i nz-icon nzType="download" nzTheme="outline"></i>
             </a>

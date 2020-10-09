@@ -1,8 +1,8 @@
-<!-- permission search template begin -->
-<ng-template #searchPermissionsTable>
-  <form nz-form [formGroup]="searchPermissionForm" (submit)="getPermissionsAndCount(1)">
-    <div nz-row nzGutter="24">
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+<!-- roleGroup search template begin -->
+<ng-template #searchRoleGroupsTable>
+  <form nz-form [formGroup]="searchRoleGroupForm" (submit)="getRoleGroupsAndCount(1)">
+    <nz-row nzGutter="16">
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-code">
             代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码
@@ -16,8 +16,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div nz-col nzSm="12" nzMd="8" nzLg="6">
+      </nz-col>
+      <nz-col nzSm="12" nzMd="8" nzLg="6">
         <nz-form-item>
           <nz-form-label nzFor="search-name">
             名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称
@@ -31,9 +31,8 @@
             />
           </nz-form-control>
         </nz-form-item>
-      </div>
-      <div
-        nz-col
+      </nz-col>
+      <nz-col
         [nzSm]="{ span: 12, push: 12 }"
         [nzMd]="{ span: 8, push: 0 }"
         [nzLg]="{ span: 6, push: 6 }"
@@ -50,28 +49,28 @@
             </nz-space-item>
           </nz-space>
         </nz-form-item>
-      </div>
-    </div>
+      </nz-col>
+    </nz-row>
   </form>
 </ng-template>
-<!-- permission search template end -->
+<!-- roleGroup search template end -->
 
-<!-- permission list template begin -->
+<!-- roleGroup list template begin -->
 <nz-table
-  #permissionsTable
-  [nzTitle]="searchPermissionsTable"
-  [nzLoading]="permissionsLoading"
-  [nzData]="permissions"
-  [nzTotal]="permissionsTotal"
-  [(nzPageIndex)]="permissionsPageNumber"
-  [(nzPageSize)]="permissionsPageSize"
+  #roleGroupsTable
+  [nzTitle]="searchRoleGroupsTable"
+  [nzLoading]="roleGroupsLoading"
+  [nzData]="roleGroups"
+  [nzTotal]="roleGroupsTotal"
+  [(nzPageIndex)]="roleGroupsPageNumber"
+  [(nzPageSize)]="roleGroupsPageSize"
   nzBordered
   nzSize="small"
   [nzFrontPagination]="false"
   nzShowSizeChanger
   nzHideOnSinglePage
-  (nzPageIndexChange)="getPermissionsAndCount($event)"
-  (nzPageSizeChange)="getPermissionsAndCount(permissionsPageNumber, $event)"
+  (nzPageIndexChange)="getRoleGroupsAndCount($event)"
+  (nzPageSizeChange)="getRoleGroupsAndCount(roleGroupsPageNumber, $event)"
 >
   <thead>
     <tr>
@@ -89,7 +88,7 @@
               nzSize="small"
               nz-tooltip
               nzTooltipTitle="点击创建"
-              (click)="openPermissionModal()"
+              (click)="openRoleGroupModal()"
             >
               <i nz-icon nzType="plus" nzTheme="outline"></i>
             </button>
@@ -99,10 +98,10 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let permission of permissionsTable.data">
-      <td>{{ permission.id }}</td>
-      <td>{{ permission.code }}</td>
-      <td>{{ permission.name }}</td>
+    <tr *ngFor="let roleGroup of roleGroupsTable.data">
+      <td>{{ roleGroup.id }}</td>
+      <td>{{ roleGroup.code }}</td>
+      <td>{{ roleGroup.name }}</td>
       <td class="tac">
         <nz-space>
           <nz-space-item>
@@ -113,7 +112,7 @@
               nzSize="small"
               nz-tooltip
               nzTooltipTitle="点击编辑"
-              (click)="openPermissionModal(permission)"
+              (click)="openRoleGroupModal(roleGroup)"
             >
               <i nz-icon nzType="edit" nzTheme="outline"></i>
             </button>
@@ -127,9 +126,9 @@
               nzDanger
               nz-popconfirm
               [nzTitle]="messages.DELETE_CONFIRM"
-              (nzOnConfirm)="deletePermission(permission.id)"
-              [nzLoading]="deletedPermissionId === permission.id"
-              [disabled]="deletedPermissionId === permission.id"
+              (nzOnConfirm)="deleteRoleGroup(roleGroup.id)"
+              [nzLoading]="deletedRoleGroupId === roleGroup.id"
+              [disabled]="deletedRoleGroupId === roleGroup.id"
               nz-tooltip
               nzTooltipTitle="点击删除"
             >
@@ -141,20 +140,20 @@
     </tr>
   </tbody>
 </nz-table>
-<!-- permission list template end -->
+<!-- roleGroup list template end -->
 
-<!-- permission modal template begin -->
+<!-- roleGroup modal template begin -->
 <nz-modal
-  [(nzVisible)]="permissionModalVisible"
-  nzTitle="权限管理"
+  [(nzVisible)]="roleGroupModalVisible"
+  nzTitle="角色组管理"
   [nzContent]="modalContent"
   [nzFooter]="modalFooter"
-  (nzOnCancel)="closePermissionModal()"
+  (nzOnCancel)="closeRoleGroupModal()"
 >
 </nz-modal>
 <ng-template #modalContent>
   <nz-content>
-    <form nz-form [formGroup]="permissionForm" (submit)="savePermissionForm()">
+    <form nz-form [formGroup]="roleGroupForm" (submit)="saveRoleGroupForm()">
       <nz-form-item>
         <nz-form-label nzSpan="4" nzFor="form-code" nzRequired>代码</nz-form-label>
         <nz-form-control nzSpan="20" nzValidateStatus nzHasFeedback>
@@ -182,17 +181,17 @@
   </nz-content>
 </ng-template>
 <ng-template #modalFooter>
-  <button nz-button nzType="default" (click)="closePermissionModal()">
+  <button nz-button nzType="default" (click)="closeRoleGroupModal()">
     取消
   </button>
   <button
     nz-button
     nzType="primary"
-    [disabled]="savePermissionDisabled"
-    [nzLoading]="savePermissionLoading"
-    (click)="savePermissionForm()"
+    [disabled]="saveRoleGroupDisabled"
+    [nzLoading]="saveRoleGroupLoading"
+    (click)="saveRoleGroupForm()"
   >
     保存
   </button>
 </ng-template>
-<!-- permission modal template end -->
+<!-- roleGroup modal template end -->

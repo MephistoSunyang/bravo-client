@@ -1,7 +1,6 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { NzMessageModule } from 'ng-zorro-antd';
-import { TokenGuard } from './guards';
 import {
   AccessTokenInterceptor,
   HttpExceptionInterceptor,
@@ -30,7 +29,6 @@ const interceptors = [
   { provide: HTTP_INTERCEPTORS, useClass: RefreshTokenInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true },
 ];
-const guards = [TokenGuard];
 const services = [
   FormService,
   FrameworkService,
@@ -40,7 +38,7 @@ const services = [
   SessionService,
   StorageService,
 ];
-const providers = [...services, ...guards, ...interceptors];
+const providers = [...interceptors, ...services];
 
 @NgModule({
   imports: [...modules],

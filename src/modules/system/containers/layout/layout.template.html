@@ -3,7 +3,12 @@
     <nz-sider class="system-sider">
       <div class="system-logo">BravoNJ</div>
       <nz-content class="system-menu">
-        <menu-list theme="dark" model="inline" [menus]="menus" [firstMenu]="firstMenu"></menu-list>
+        <system-menus
+          theme="dark"
+          model="inline"
+          [menus]="menus"
+          [firstMenu]="firstMenu"
+        ></system-menus>
       </nz-content>
       <nz-footer class="system-copyright">
         ©2020<br />

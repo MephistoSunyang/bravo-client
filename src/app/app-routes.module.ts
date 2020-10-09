@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, Route, RouterModule } from '@angular/router';
 import { environment } from '../environments/environment.local';
+import { AttachmentModule } from '../modules/attachment';
 import { SystemModule } from '../modules/system';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
@@ -16,6 +17,7 @@ const routes: Route[] = [
   { path: 'login', component: LoginComponent },
   { path: 'authentication', component: AuthenticationComponent },
   { path: 'system', loadChildren: () => SystemModule },
+  { path: 'system', loadChildren: () => AttachmentModule },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: 'forbidden', component: ForbiddenComponent },
   { path: 'internalServerError', component: InternalServerErrorComponent },
@@ -23,7 +25,7 @@ const routes: Route[] = [
 ];
 
 if (environment.production) {
-  routes.splice(2, 2);
+  routes.splice(1, 2);
 }
 
 @NgModule({

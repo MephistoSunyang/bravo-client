@@ -1,4 +1,6 @@
 export class AttachmentModel {
+  public id: number;
+
   public name: string;
 
   public encoding: string;

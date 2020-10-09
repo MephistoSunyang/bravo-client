@@ -188,7 +188,7 @@ export class AttachmentsComponent implements OnInit {
   public async saveAttachmentForm() {
     this.saveAttachmentLoading = true;
     const formData = new FormData();
-    formData.append('files', this.files[0] as any);
+    formData.append('file', this.files[0] as any);
     formData.append('storageType', this.attachmentForm.value.storageType);
     const result = await this.httpClient
       .post<IResult<AttachmentModel>>('api/v1/attachments', formData)
